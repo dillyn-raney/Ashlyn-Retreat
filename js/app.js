@@ -560,9 +560,14 @@ function renderJournalsList() {
                             <span class="journal-entry-date">${displayDate}</span>
                             <span class="journal-entry-type">Daily</span>
                         </div>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteDailyEntry('${date}')" title="Delete entry">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editDailyEntry('${date}')" title="Edit entry">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteDailyEntry('${date}')" title="Delete entry">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="journal-entry-content">
                         <p><strong>Intention:</strong> ${entry.intention || 'N/A'}</p>
@@ -586,9 +591,14 @@ function renderJournalsList() {
                             <span class="journal-entry-date">${displayDate}</span>
                             <span class="journal-entry-type">Freeform</span>
                         </div>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteFreeformEntry(${index})" title="Delete entry">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editFreeformEntry(${index})" title="Edit entry">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFreeformEntry(${index})" title="Delete entry">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="journal-entry-content">
                         <p>${entry.text.substring(0, 200)}${entry.text.length > 200 ? '...' : ''}</p>
@@ -604,8 +614,13 @@ function renderJournalsList() {
         html += `
             <div class="journal-entry">
                 <div class="journal-entry-header">
-                    <span class="journal-entry-date">To be opened April 23, 2026</span>
-                    <span class="journal-entry-type">Future</span>
+                    <div>
+                        <span class="journal-entry-date">To be opened April 23, 2026</span>
+                        <span class="journal-entry-type">Future</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="editFutureLetter()" title="Edit letter">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                 </div>
                 <div class="journal-entry-content">
                     <p><strong>Business Idea:</strong> ${futureLetter.businessIdea || 'N/A'}</p>
@@ -928,6 +943,54 @@ function deleteKanbanCard(cardId, column) {
 window.moveKanbanCard = moveKanbanCard;
 window.deleteKanbanCard = deleteKanbanCard;
 
+// Journal edit functions
+function editDailyEntry(date) {
+    // Set the date in the daily reflection form
+    const dailyDate = document.getElementById('dailyDate');
+    if (dailyDate) {
+        dailyDate.value = date;
+        // Trigger the change event to load the entry
+        loadDailyReflection();
+    }
+
+    // Switch to the Daily Reflection tab
+    const dailyTab = document.getElementById('daily-tab');
+    if (dailyTab) {
+        const tab = new bootstrap.Tab(dailyTab);
+        tab.show();
+    }
+}
+
+function editFreeformEntry(index) {
+    const entries = Storage.getFreeformEntries(currentUser);
+    const entry = entries[index];
+
+    if (entry) {
+        // Load the entry into the form
+        document.getElementById('freeformDate').value = entry.date;
+        document.getElementById('freeformText').value = entry.text;
+
+        // Set the current entry ID so it updates instead of creating new
+        currentFreeformEntryId = entry.id;
+
+        // Switch to the Freeform tab
+        const freeformTab = document.getElementById('freeform-tab');
+        if (freeformTab) {
+            const tab = new bootstrap.Tab(freeformTab);
+            tab.show();
+        }
+    }
+}
+
+function editFutureLetter() {
+    // Switch to the Future Letter tab (data is already loaded)
+    const futureTab = document.getElementById('future-tab');
+    if (futureTab) {
+        const tab = new bootstrap.Tab(futureTab);
+        tab.show();
+    }
+}
+
 // Journal delete functions
 function deleteDailyEntry(date) {
     if (confirm(`Are you sure you want to delete the daily reflection from ${new Date(date + 'T00:00:00').toLocaleDateString()}?`)) {
@@ -956,6 +1019,10 @@ function deleteFreeformEntry(index) {
     }
 }
 
+// Make journal functions global for onclick handlers
+window.editDailyEntry = editDailyEntry;
+window.editFreeformEntry = editFreeformEntry;
+window.editFutureLetter = editFutureLetter;
 window.deleteDailyEntry = deleteDailyEntry;
 window.deleteFreeformEntry = deleteFreeformEntry;
 
