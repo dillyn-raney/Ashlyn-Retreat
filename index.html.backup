@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Ashlyn Retreat - A Journey to Purpose, Prosperity & Partnership">
+    <title>The Ashlyn Retreat</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#home">
+                <i class="bi bi-heart-fill text-primary"></i>
+                <span class="brand-text">The Ashlyn Retreat</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#journal">Journal</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tools">Tools</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#meals">Meals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#supplies">Supplies</a></li>
+                </ul>
+                <div class="user-toggle ms-3">
+                    <button id="userToggle" class="btn btn-sm btn-primary">
+                        <i class="bi bi-person-circle"></i>
+                        <span id="currentUser">Dillyn</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section hero-section">
+            <div class="container">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-8">
+                        <h1 class="display-4 mb-4">The Ashlyn Retreat</h1>
+                        <p class="lead mb-4">A Journey to Purpose, Prosperity & Partnership</p>
+                        <div class="retreat-info">
+                            <p><i class="bi bi-calendar-event"></i> <strong>October 23-26, 2025</strong></p>
+                            <p><i class="bi bi-geo-alt"></i> The Glass House, 7505 SW 137th Ave, Archer, FL 32618</p>
+                        </div>
+                        <div class="countdown-timer mt-4" id="countdownTimer"></div>
+                        <div class="retreat-progress mt-5">
+                            <h5>Retreat Progress</h5>
+                            <div class="progress-item">
+                                <small>Supplies Packed</small>
+                                <div class="progress">
+                                    <div id="suppliesProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%">0%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="intention-box mt-5">
+                            <h4>Retreat Intention</h4>
+                            <p>To set attainable goals, generate business ideas for passive income, and create a life of fulfillment and purpose through the power of our partnership.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule Section -->
+        <section id="schedule" class="section">
+            <div class="container">
+                <h2 class="section-title">Daily Schedule</h2>
+                <div class="schedule-controls mb-4">
+                    <button class="btn btn-sm btn-outline-primary" id="enableNotifications">
+                        <i class="bi bi-bell"></i> Enable Notifications
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" id="exportAllCalendar">
+                        <i class="bi bi-calendar-plus"></i> Export All to Calendar
+                    </button>
+                </div>
+                <div class="accordion" id="scheduleAccordion"></div>
+            </div>
+        </section>
+
+        <!-- Journaling Section -->
+        <section id="journal" class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">Journaling</h2>
+
+                <ul class="nav nav-tabs mb-4" id="journalTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button">Daily Reflection</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="freeform-tab" data-bs-toggle="tab" data-bs-target="#freeform" type="button">Freeform</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="future-tab" data-bs-toggle="tab" data-bs-target="#future" type="button">Letter to Future Self</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="view-tab" data-bs-toggle="tab" data-bs-target="#viewJournals" type="button">View All</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="journalTabContent">
+                    <!-- Daily Reflection -->
+                    <div class="tab-pane fade show active" id="daily" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="save-indicator mb-3" id="dailySaveIndicator"></div>
+                                <form id="dailyReflectionForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Date</label>
+                                        <input type="date" class="form-control" id="dailyDate" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Today's Intention</label>
+                                        <input type="text" class="form-control journal-field" data-field="intention">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Energy Level: <span id="energyValue">5</span></label>
+                                        <input type="range" class="form-range journal-field" min="1" max="10" value="5" id="energyLevel" data-field="energy">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Key Insights</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="insights"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Moments of Clarity</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="clarity"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Challenges or Resistance</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="challenges"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ideas Generated</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="ideas"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Action Items</label>
+                                        <div class="action-items">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-text">
+                                                    <input class="form-check-input journal-field" type="checkbox" data-field="action1Done">
+                                                </div>
+                                                <input type="text" class="form-control journal-field" data-field="action1">
+                                            </div>
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-text">
+                                                    <input class="form-check-input journal-field" type="checkbox" data-field="action2Done">
+                                                </div>
+                                                <input type="text" class="form-control journal-field" data-field="action2">
+                                            </div>
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-text">
+                                                    <input class="form-check-input journal-field" type="checkbox" data-field="action3Done">
+                                                </div>
+                                                <input type="text" class="form-control journal-field" data-field="action3">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Gratitude</label>
+                                        <input type="text" class="form-control mb-2 journal-field" placeholder="1." data-field="gratitude1">
+                                        <input type="text" class="form-control mb-2 journal-field" placeholder="2." data-field="gratitude2">
+                                        <input type="text" class="form-control journal-field" placeholder="3." data-field="gratitude3">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tomorrow's Focus</label>
+                                        <input type="text" class="form-control journal-field" data-field="tomorrowFocus">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="exportDailyPDF">
+                                        <i class="bi bi-file-pdf"></i> Export as PDF
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Freeform Journal -->
+                    <div class="tab-pane fade" id="freeform" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="save-indicator mb-3" id="freeformSaveIndicator"></div>
+                                <div class="mb-3">
+                                    <label class="form-label">Select a Prompt (Optional)</label>
+                                    <select class="form-select" id="promptSelector">
+                                        <option value="">-- Choose a prompt --</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="freeformDate">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Your Thoughts</label>
+                                    <textarea class="form-control journal-field" id="freeformText" rows="10" data-field="freeform"></textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary" id="saveFreeform">
+                                    <i class="bi bi-save"></i> Save Entry
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Letter to Future Self -->
+                    <div class="tab-pane fade" id="future" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-envelope-heart"></i> To be opened April 23, 2026
+                                </div>
+                                <div class="save-indicator mb-3" id="futureSaveIndicator"></div>
+                                <form id="futureLetterForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Where We Were</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="whereWeWere"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Our Business Idea</label>
+                                        <textarea class="form-control journal-field" rows="2" data-field="businessIdea"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Our Commitment to Each Other</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="commitment"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Personal Goals</label>
+                                        <input type="text" class="form-control mb-2 journal-field" placeholder="1." data-field="personalGoal1">
+                                        <input type="text" class="form-control mb-2 journal-field" placeholder="2." data-field="personalGoal2">
+                                        <input type="text" class="form-control journal-field" placeholder="3." data-field="personalGoal3">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">How We've Grown</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="howGrown"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">What We're Most Excited About</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="excited"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Our Fears We're Choosing to Move Past</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="fears"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">The Life We're Creating</label>
+                                        <textarea class="form-control journal-field" rows="3" data-field="lifeCreating"></textarea>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="exportFuturePDF">
+                                        <i class="bi bi-file-pdf"></i> Export as PDF
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- View All Journals -->
+                    <div class="tab-pane fade" id="viewJournals" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5>All Journal Entries</h5>
+                                    <button class="btn btn-primary" id="exportAllJournals">
+                                        <i class="bi bi-file-pdf"></i> Export All
+                                    </button>
+                                </div>
+                                <div id="journalsList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Business Tools Section -->
+        <section id="tools" class="section">
+            <div class="container">
+                <h2 class="section-title">Business Planning Tools</h2>
+
+                <ul class="nav nav-tabs mb-4" id="toolsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="ikigai-tool-tab" data-bs-toggle="tab" data-bs-target="#ikigaiTool" type="button">Ikigai</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="swot-tool-tab" data-bs-toggle="tab" data-bs-target="#swotTool" type="button">SWOT</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="value-tool-tab" data-bs-toggle="tab" data-bs-target="#valueTool" type="button">Value Proposition</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="kanban-tool-tab" data-bs-toggle="tab" data-bs-target="#kanbanTool" type="button">Kanban Board</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="action-tool-tab" data-bs-toggle="tab" data-bs-target="#actionTool" type="button">90-Day Plan</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="toolsTabContent">
+                    <!-- Ikigai -->
+                    <div class="tab-pane fade show active" id="ikigaiTool" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="save-indicator mb-3" id="ikigaiSaveIndicator"></div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Fill in Your Ikigai</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">What You LOVE</label>
+                                            <textarea class="form-control tool-field" data-tool="ikigai" data-field="love" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">What You're GOOD AT</label>
+                                            <textarea class="form-control tool-field" data-tool="ikigai" data-field="goodAt" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">What You Can Be PAID FOR</label>
+                                            <textarea class="form-control tool-field" data-tool="ikigai" data-field="paidFor" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">What The World NEEDS</label>
+                                            <textarea class="form-control tool-field" data-tool="ikigai" data-field="worldNeeds" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Your Ikigai Center</h5>
+                                        <div id="ikigaiDiagram" class="ikigai-visual">
+                                            <svg viewBox="0 0 400 400" class="ikigai-svg">
+                                                <circle cx="150" cy="150" r="100" fill="#88B398" opacity="0.3"/>
+                                                <circle cx="250" cy="150" r="100" fill="#E8B87E" opacity="0.3"/>
+                                                <circle cx="150" cy="250" r="100" fill="#A8BFCE" opacity="0.3"/>
+                                                <circle cx="250" cy="250" r="100" fill="#E8C4A1" opacity="0.3"/>
+                                                <text x="150" y="100" text-anchor="middle" class="ikigai-label">LOVE</text>
+                                                <text x="250" y="100" text-anchor="middle" class="ikigai-label">GOOD AT</text>
+                                                <text x="150" y="320" text-anchor="middle" class="ikigai-label">WORLD NEEDS</text>
+                                                <text x="250" y="320" text-anchor="middle" class="ikigai-label">PAID FOR</text>
+                                                <circle cx="200" cy="200" r="20" fill="#7FA99B"/>
+                                                <text x="200" y="205" text-anchor="middle" class="ikigai-center">IKIGAI</text>
+                                            </svg>
+                                        </div>
+                                        <button class="btn btn-primary mt-3" id="exportIkigai">
+                                            <i class="bi bi-file-pdf"></i> Export
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SWOT Analysis -->
+                    <div class="tab-pane fade" id="swotTool" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="save-indicator mb-3" id="swotSaveIndicator"></div>
+                                <div class="mb-3">
+                                    <label class="form-label">Business Idea Name</label>
+                                    <input type="text" class="form-control tool-field" data-tool="swot" data-field="ideaName" placeholder="Name this analysis">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-success"><strong>Strengths</strong></label>
+                                        <textarea class="form-control tool-field" data-tool="swot" data-field="strengths" rows="5" placeholder="Internal advantages, skills, resources..."></textarea>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-danger"><strong>Weaknesses</strong></label>
+                                        <textarea class="form-control tool-field" data-tool="swot" data-field="weaknesses" rows="5" placeholder="Internal limitations, skills lacking..."></textarea>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-primary"><strong>Opportunities</strong></label>
+                                        <textarea class="form-control tool-field" data-tool="swot" data-field="opportunities" rows="5" placeholder="External advantages, market trends..."></textarea>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-warning"><strong>Threats</strong></label>
+                                        <textarea class="form-control tool-field" data-tool="swot" data-field="threats" rows="5" placeholder="External challenges, competition..."></textarea>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="exportSWOT">
+                                    <i class="bi bi-file-pdf"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Value Proposition Canvas -->
+                    <div class="tab-pane fade" id="valueTool" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="save-indicator mb-3" id="valueSaveIndicator"></div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Customer Profile</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Customer Jobs</label>
+                                            <textarea class="form-control tool-field" data-tool="value" data-field="customerJobs" rows="3" placeholder="What tasks is your customer trying to accomplish?"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Pains</label>
+                                            <textarea class="form-control tool-field" data-tool="value" data-field="pains" rows="3" placeholder="What frustrates them? What obstacles?"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Gains</label>
+                                            <textarea class="form-control tool-field" data-tool="value" data-field="gains" rows="3" placeholder="What outcomes do they want?"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Value Map</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Products & Services</label>
+                                            <textarea class="form-control tool-field" data-tool="value" data-field="products" rows="3" placeholder="What are you offering?"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Pain Relievers</label>
+                                            <textarea class="form-control tool-field" data-tool="value" data-field="painRelievers" rows="3" placeholder="How do you eliminate/reduce customer pains?"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Gain Creators</label>
+                                            <textarea class="form-control tool-field" data-tool="value" data-field="gainCreators" rows="3" placeholder="How do you create customer gains?"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="exportValue">
+                                    <i class="bi bi-file-pdf"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kanban Board -->
+                    <div class="tab-pane fade" id="kanbanTool" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button class="btn btn-success" id="addKanbanCard">
+                                        <i class="bi bi-plus-circle"></i> Add New Idea
+                                    </button>
+                                </div>
+                                <div class="row kanban-board">
+                                    <div class="col-md-4">
+                                        <div class="kanban-column">
+                                            <h5 class="kanban-header bg-info">Develop Further</h5>
+                                            <div id="kanbanDevelop" class="kanban-cards"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="kanban-column">
+                                            <h5 class="kanban-header bg-warning">Ready for Action ⭐</h5>
+                                            <div id="kanbanReady" class="kanban-cards"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="kanban-column">
+                                            <h5 class="kanban-header bg-secondary">Parking Lot</h5>
+                                            <div id="kanbanParking" class="kanban-cards"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 90-Day Action Plan -->
+                    <div class="tab-pane fade" id="actionTool" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="save-indicator mb-3" id="actionSaveIndicator"></div>
+                                <div class="mb-4">
+                                    <label class="form-label"><strong>Business Idea</strong></label>
+                                    <input type="text" class="form-control tool-field" data-tool="action" data-field="businessIdea">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label"><strong>Vision Statement</strong></label>
+                                    <textarea class="form-control tool-field" data-tool="action" data-field="vision" rows="2"></textarea>
+                                </div>
+
+                                <!-- Month 1 -->
+                                <h5 class="text-primary mt-4">Month 1: Foundation (Days 1-30)</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Primary Goal</label>
+                                    <input type="text" class="form-control tool-field" data-tool="action" data-field="month1Goal">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Key Milestones</label>
+                                    <textarea class="form-control tool-field" data-tool="action" data-field="month1Milestones" rows="3"></textarea>
+                                </div>
+
+                                <!-- Month 2 -->
+                                <h5 class="text-primary mt-4">Month 2: Build (Days 31-60)</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Primary Goal</label>
+                                    <input type="text" class="form-control tool-field" data-tool="action" data-field="month2Goal">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Key Milestones</label>
+                                    <textarea class="form-control tool-field" data-tool="action" data-field="month2Milestones" rows="3"></textarea>
+                                </div>
+
+                                <!-- Month 3 -->
+                                <h5 class="text-primary mt-4">Month 3: Launch/Refine (Days 61-90)</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Primary Goal</label>
+                                    <input type="text" class="form-control tool-field" data-tool="action" data-field="month3Goal">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Key Milestones</label>
+                                    <textarea class="form-control tool-field" data-tool="action" data-field="month3Milestones" rows="3"></textarea>
+                                </div>
+
+                                <button class="btn btn-primary" id="exportAction">
+                                    <i class="bi bi-file-pdf"></i> Export Plan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Meals Section -->
+        <section id="meals" class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">Meal Plans & Recipes</h2>
+
+                <ul class="nav nav-tabs mb-4" id="mealsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="recipes-tab" data-bs-toggle="tab" data-bs-target="#recipes" type="button">Recipes</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="snacks-tab" data-bs-toggle="tab" data-bs-target="#snacks" type="button">Snacks</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="mealsTabContent">
+                    <div class="tab-pane fade show active" id="recipes" role="tabpanel">
+                        <div id="recipesList" class="row"></div>
+                    </div>
+                    <div class="tab-pane fade" id="snacks" role="tabpanel">
+                        <div id="snacksList" class="row"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Supplies Section -->
+        <section id="supplies" class="section">
+            <div class="container">
+                <h2 class="section-title">Supply Checklist</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="progress flex-grow-1 me-3" style="height: 30px;">
+                                <div id="suppliesProgressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%">
+                                    <span id="suppliesProgressText">0%</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm" id="resetSupplies">Reset All</button>
+                        </div>
+                        <div id="suppliesList"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section id="resources" class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">Resources & Tips</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-music-note-beamed"></i> Retreat Atmosphere</h5>
+                                <p><strong>Soundscapes:</strong></p>
+                                <ul>
+                                    <li>Nature sounds for meditation</li>
+                                    <li>Binaural beats for focus</li>
+                                    <li>Handpan for creative flow</li>
+                                    <li>Silence for deep thinking</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-lightbulb"></i> Tech Boundaries</h5>
+                                <ul>
+                                    <li>Phones on airplane mode except for retreat app</li>
+                                    <li>No social media</li>
+                                    <li>Use devices only for retreat activities</li>
+                                    <li>Embrace analog (pen and paper) when possible</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-heart"></i> Closing Thoughts</h5>
+                                <p>This retreat is your container for transformation. Trust the process, honor the space, and lean into vulnerability with each other. You're not just building a business—you're designing a life that honors both of your gifts and creates something meaningful for others.</p>
+                                <p class="mb-0"><strong>Remember:</strong> The goal isn't perfection. It's clarity, connection, and commitment.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-4 bg-dark text-light">
+        <div class="container text-center">
+            <p class="mb-2">&copy; 2025 The Ashlyn Retreat</p>
+            <p class="small mb-0">May this retreat be the beginning of your greatest adventure together.</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Kanban Card Modal -->
+    <div class="modal fade" id="kanbanModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="kanbanModalLabel">Add New Idea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Idea Title</label>
+                        <input type="text" class="form-control" id="kanbanCardTitle">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="kanbanCardDesc" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Starting Column</label>
+                        <select class="form-select" id="kanbanCardColumn">
+                            <option value="develop">Develop Further</option>
+                            <option value="ready">Ready for Action</option>
+                            <option value="parking">Parking Lot</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveKanbanCard">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- App Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

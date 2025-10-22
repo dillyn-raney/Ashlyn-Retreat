@@ -1,0 +1,109 @@
+<!-- Firebase Authentication Modal - INSERT BEFORE CLOSING </body> TAG -->
+
+    <!-- Firebase Authentication Modal -->
+    <div id="authModal" class="auth-modal" style="display: none;">
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <i class="bi bi-heart-fill text-primary" style="font-size: 3rem;"></i>
+                    <h2>The Ashlyn Retreat</h2>
+                    <p class="text-muted">Sign in to sync your data across all devices</p>
+                </div>
+
+                <!-- Sign In Form -->
+                <div id="signInForm" class="auth-form">
+                    <h4 class="mb-4">Sign In</h4>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="signInEmail" placeholder="your@email.com" autocomplete="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="signInPassword" placeholder="Password" autocomplete="current-password">
+                    </div>
+                    <button class="btn btn-primary w-100 mb-3" id="signInBtn">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                    </button>
+                    <div class="text-center">
+                        <p class="mb-2">
+                            Don't have an account?
+                            <a href="#" id="showSignUp" class="text-primary">Sign up</a>
+                        </p>
+                        <p class="mb-0">
+                            <small><a href="#" id="continueOffline" class="text-muted">Continue without signing in (offline mode)</a></small>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Sign Up Form -->
+                <div id="signUpForm" class="auth-form" style="display: none;">
+                    <h4 class="mb-4">Create Account</h4>
+                    <div class="mb-3">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="signUpName" placeholder="Dillyn or Ashlee" autocomplete="name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="signUpEmail" placeholder="your@email.com" autocomplete="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="signUpPassword" placeholder="Min 6 characters" autocomplete="new-password">
+                        <small class="form-text text-muted">Minimum 6 characters</small>
+                    </div>
+                    <button class="btn btn-primary w-100 mb-3" id="signUpBtn">
+                        <i class="bi bi-person-plus"></i> Create Account
+                    </button>
+                    <p class="text-center mb-0">
+                        Already have an account?
+                        <a href="#" id="showSignIn" class="text-primary">Sign in</a>
+                    </p>
+                </div>
+
+                <div id="authError" class="alert alert-danger mt-3" style="display: none;"></div>
+                <div id="authSuccess" class="alert alert-success mt-3" style="display: none;"></div>
+
+                <div class="auth-footer mt-4">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <span class="sync-status" id="syncStatus">
+                            <i class="bi bi-cloud-slash text-muted"></i>
+                            <small class="text-muted">Offline Mode</small>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Status Bar (shows when logged in) -->
+    <div id="syncStatusBar" class="sync-status-bar" style="display: none;">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-cloud-check text-success"></i>
+                    <small>Synced - <span class="firebase-user-display"></span></small>
+                </span>
+                <button class="btn btn-sm btn-outline-secondary" id="signOutBtn">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+<!-- END Firebase Authentication Modal -->
+
+<!-- ADD THESE SCRIPT TAGS BEFORE OTHER JS SCRIPTS -->
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<!-- CHANGE THIS LINE:
+    <script src="js/storage.js"></script>
+
+TO THESE LINES:
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/storage.js"></script>
+-->

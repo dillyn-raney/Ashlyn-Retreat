@@ -1,0 +1,488 @@
+{
+  "schedule": {
+    "2025-10-23": {
+      "day": "Thursday",
+      "title": "Arrival & Grounding",
+      "activities": [
+        {
+          "time": "15:00",
+          "duration": 90,
+          "title": "Arrive & Settle In",
+          "energy": "moderate",
+          "description": "Unpack, explore the space, claim your meditation spots"
+        },
+        {
+          "time": "16:30",
+          "duration": 30,
+          "title": "Opening Ceremony",
+          "energy": "energizing",
+          "description": "Light a candle, set intentions together, read retreat mission aloud"
+        },
+        {
+          "time": "17:00",
+          "duration": 60,
+          "title": "Nature Walk",
+          "energy": "energizing",
+          "description": "Explore the property, ground yourselves in nature"
+        },
+        {
+          "time": "18:00",
+          "duration": 90,
+          "title": "Cook Dinner Together",
+          "energy": "moderate",
+          "description": "Lemon Herb Salmon - collaborate in the kitchen"
+        },
+        {
+          "time": "19:30",
+          "duration": 90,
+          "title": "Couples Connection Activity",
+          "energy": "restful",
+          "description": "Bowl of questions, deep conversation"
+        },
+        {
+          "time": "21:00",
+          "duration": 60,
+          "title": "Daily Reflection Journaling",
+          "energy": "restful",
+          "description": "Individual journaling with prompts"
+        },
+        {
+          "time": "22:00",
+          "duration": 120,
+          "title": "Wind Down / Slothing",
+          "energy": "restful",
+          "description": "Connect and relax"
+        }
+      ]
+    },
+    "2025-10-24": {
+      "day": "Friday",
+      "title": "Vision & Exploration",
+      "activities": [
+        {
+          "time": "09:00",
+          "duration": 30,
+          "title": "Wake & Coffee",
+          "energy": "moderate",
+          "description": "Gentle morning"
+        },
+        {
+          "time": "09:30",
+          "duration": 30,
+          "title": "Morning Ritual",
+          "energy": "energizing",
+          "description": "Gratitude journaling, intentions for the day"
+        },
+        {
+          "time": "10:00",
+          "duration": 30,
+          "title": "Guided Breathwork",
+          "energy": "energizing",
+          "description": "Use your app, 30 minutes"
+        },
+        {
+          "time": "10:30",
+          "duration": 20,
+          "title": "Outdoor Meditation",
+          "energy": "restful",
+          "description": "20 minutes in nature"
+        },
+        {
+          "time": "11:00",
+          "duration": 60,
+          "title": "Reading: Think and Grow Rich",
+          "energy": "moderate",
+          "description": "Chapters 1-2, individual reading"
+        },
+        {
+          "time": "12:00",
+          "duration": 30,
+          "title": "Microdose + Light Snack",
+          "energy": "moderate",
+          "description": "Psilocybin, prepare for afternoon session"
+        },
+        {
+          "time": "12:30",
+          "duration": 60,
+          "title": "Free Time / Handpan",
+          "energy": "restful",
+          "description": "Relax, play music, light walk"
+        },
+        {
+          "time": "13:30",
+          "duration": 120,
+          "title": "Brainstorming Session 1: Vision Alignment",
+          "energy": "energizing",
+          "description": "90-120 min - What does our ideal life look like?"
+        },
+        {
+          "time": "15:30",
+          "duration": 60,
+          "title": "Break / Nature Walk",
+          "energy": "moderate",
+          "description": "Process ideas, walking meeting optional"
+        },
+        {
+          "time": "16:30",
+          "duration": 90,
+          "title": "Partnership Mapping Session",
+          "energy": "moderate",
+          "description": "Ikigai diagrams (individual then shared)"
+        },
+        {
+          "time": "18:00",
+          "duration": 90,
+          "title": "Cook Dinner",
+          "energy": "moderate",
+          "description": "Mediterranean Chicken Pasta"
+        },
+        {
+          "time": "19:30",
+          "duration": 60,
+          "title": "Strengths & Complementarity Exercise",
+          "energy": "moderate",
+          "description": "Visual mapping of how you complement each other"
+        },
+        {
+          "time": "20:30",
+          "duration": 60,
+          "title": "Fire Pit Reflection",
+          "energy": "restful",
+          "description": "Discuss the day's insights"
+        },
+        {
+          "time": "21:30",
+          "duration": 60,
+          "title": "Daily Reflection Journaling",
+          "energy": "restful",
+          "description": "Individual journaling"
+        },
+        {
+          "time": "22:30",
+          "duration": 120,
+          "title": "Wind Down / Slothing",
+          "energy": "restful",
+          "description": "Connect and relax"
+        }
+      ]
+    },
+    "2025-10-25": {
+      "day": "Saturday",
+      "title": "Decision & Action",
+      "activities": [
+        {
+          "time": "09:00",
+          "duration": 30,
+          "title": "Wake & Coffee",
+          "energy": "moderate",
+          "description": "Gentle morning"
+        },
+        {
+          "time": "09:30",
+          "duration": 30,
+          "title": "Morning Ritual",
+          "energy": "energizing",
+          "description": "Gratitude, intentions, light stretching"
+        },
+        {
+          "time": "10:00",
+          "duration": 30,
+          "title": "Guided Breathwork",
+          "energy": "energizing",
+          "description": "30 minutes"
+        },
+        {
+          "time": "10:30",
+          "duration": 60,
+          "title": "Reading: Think and Grow Rich",
+          "energy": "moderate",
+          "description": "Chapters 3-4"
+        },
+        {
+          "time": "11:30",
+          "duration": 30,
+          "title": "Microdose + Light Snack",
+          "energy": "moderate",
+          "description": "Vyvanse, prepare for session"
+        },
+        {
+          "time": "12:00",
+          "duration": 60,
+          "title": "Free Time / Handpan",
+          "energy": "restful",
+          "description": "Creative flow time"
+        },
+        {
+          "time": "13:00",
+          "duration": 120,
+          "title": "Brainstorming Session 2: Idea Generation",
+          "energy": "energizing",
+          "description": "120 min - Generate business ideas freely"
+        },
+        {
+          "time": "15:00",
+          "duration": 60,
+          "title": "Break / Slothing",
+          "energy": "restful",
+          "description": "Rest and integrate"
+        },
+        {
+          "time": "16:00",
+          "duration": 90,
+          "title": "Decision-Making Session",
+          "energy": "energizing",
+          "description": "SWOT Analysis + Value Proposition Canvas for top 3 ideas"
+        },
+        {
+          "time": "17:30",
+          "duration": 30,
+          "title": "Mini-Kanban Setup",
+          "energy": "moderate",
+          "description": "Organize ideas into categories"
+        },
+        {
+          "time": "18:00",
+          "duration": 90,
+          "title": "Cook Dinner",
+          "energy": "moderate",
+          "description": "Thai Coconut Curry"
+        },
+        {
+          "time": "19:30",
+          "duration": 60,
+          "title": "Action Planning Session",
+          "energy": "energizing",
+          "description": "If idea is chosen, create Trello board structure"
+        },
+        {
+          "time": "20:30",
+          "duration": 60,
+          "title": "90-Day Action Plan",
+          "energy": "moderate",
+          "description": "Fill out template together"
+        },
+        {
+          "time": "21:30",
+          "duration": 60,
+          "title": "Letter to Future Self",
+          "energy": "restful",
+          "description": "Write letters to open in 6 months"
+        },
+        {
+          "time": "22:30",
+          "duration": 30,
+          "title": "Closing Ceremony",
+          "energy": "restful",
+          "description": "Gratitude circle, seal intentions"
+        },
+        {
+          "time": "23:00",
+          "duration": 60,
+          "title": "Wind Down / Slothing",
+          "energy": "restful",
+          "description": "Final evening together at the retreat"
+        }
+      ]
+    },
+    "2025-10-26": {
+      "day": "Sunday",
+      "title": "Integration & Departure",
+      "activities": [
+        {
+          "time": "09:00",
+          "duration": 30,
+          "title": "Wake & Coffee",
+          "energy": "moderate",
+          "description": "Gentle morning"
+        },
+        {
+          "time": "09:30",
+          "duration": 30,
+          "title": "Final Meditation",
+          "energy": "restful",
+          "description": "Gratitude and integration"
+        },
+        {
+          "time": "10:00",
+          "duration": 60,
+          "title": "Pack & Clean",
+          "energy": "moderate",
+          "description": "Leave the space with gratitude"
+        },
+        {
+          "time": "11:00",
+          "duration": 0,
+          "title": "Checkout",
+          "energy": "moderate",
+          "description": "Depart for natural spring"
+        }
+      ]
+    }
+  },
+  "recipes": [
+    {
+      "day": "Thursday",
+      "name": "Lemon Herb Salmon with Roasted Vegetables",
+      "prepTime": "10 min",
+      "cookTime": "25 min",
+      "ingredients": [
+        "2 salmon fillets",
+        "2 cups mixed vegetables (broccoli, bell peppers, zucchini)",
+        "2 tbsp olive oil",
+        "1 lemon",
+        "Fresh herbs (dill, parsley)",
+        "Salt, pepper, garlic powder"
+      ],
+      "instructions": [
+        "Preheat oven to 400°F",
+        "Place salmon and vegetables on baking sheet",
+        "Drizzle with olive oil, squeeze lemon juice over salmon",
+        "Season with herbs, salt, pepper, garlic",
+        "Bake for 20-25 minutes until salmon flakes easily"
+      ]
+    },
+    {
+      "day": "Friday",
+      "name": "Mediterranean Chicken Pasta",
+      "prepTime": "10 min",
+      "cookTime": "20 min",
+      "ingredients": [
+        "8 oz whole wheat pasta (penne or rigatoni)",
+        "2 chicken breasts, diced",
+        "2 cups cherry tomatoes, halved",
+        "3 cloves garlic, minced",
+        "2 cups fresh spinach",
+        "1/2 cup feta cheese, crumbled",
+        "1/4 cup kalamata olives, sliced",
+        "3 tbsp olive oil",
+        "Fresh basil",
+        "Lemon juice",
+        "Salt, pepper, Italian seasoning"
+      ],
+      "instructions": [
+        "Cook pasta according to package directions, reserve 1/2 cup pasta water",
+        "In large pan, heat olive oil and cook chicken with Italian seasoning until golden",
+        "Add garlic and tomatoes, cook until tomatoes soften (5-7 min)",
+        "Add spinach and olives, cook until spinach wilts",
+        "Toss in cooked pasta with a splash of pasta water",
+        "Top with feta cheese, fresh basil, and squeeze of lemon juice"
+      ]
+    },
+    {
+      "day": "Saturday",
+      "name": "Thai-Inspired Coconut Curry with Chicken",
+      "prepTime": "15 min",
+      "cookTime": "25 min",
+      "ingredients": [
+        "2 chicken breasts, cubed",
+        "1 can coconut milk",
+        "2 tbsp red curry paste",
+        "Mixed vegetables (bell peppers, snap peas, carrots)",
+        "1 cup brown rice or cauliflower rice",
+        "Fresh basil",
+        "Lime",
+        "Fish sauce (optional)"
+      ],
+      "instructions": [
+        "Cook rice according to package",
+        "Sauté chicken in large pan until cooked through",
+        "Add curry paste, stir for 1 minute",
+        "Add coconut milk and vegetables",
+        "Simmer 15 minutes until vegetables tender",
+        "Serve over rice, garnish with basil and lime"
+      ]
+    }
+  ],
+  "snacks": [
+    {
+      "name": "Blueberries",
+      "benefits": "High in antioxidants, improve memory and cognitive function, reduce mental fatigue"
+    },
+    {
+      "name": "Dark Chocolate (70%+ cacao)",
+      "benefits": "Enhances focus, mood booster, contains flavonoids that improve brain function"
+    },
+    {
+      "name": "Walnuts",
+      "benefits": "Rich in omega-3s, support brain health, improve creative thinking"
+    },
+    {
+      "name": "Hummus with Vegetables",
+      "benefits": "Protein stabilizes blood sugar, vegetables provide vitamins, sustained energy"
+    },
+    {
+      "name": "Greek Yogurt with Honey",
+      "benefits": "Protein for sustained energy, probiotics support gut-brain connection"
+    },
+    {
+      "name": "Green Tea",
+      "benefits": "L-theanine promotes calm focus, mild caffeine for alertness without jitters"
+    },
+    {
+      "name": "Almonds",
+      "benefits": "Vitamin E protects cognitive function, healthy fats support brain health"
+    },
+    {
+      "name": "Avocado Toast (whole grain)",
+      "benefits": "Healthy fats improve blood flow to brain, complex carbs provide steady energy"
+    }
+  ],
+  "supplies": [
+    {
+      "category": "Tech",
+      "items": ["Speaker for guided sessions", "Computers/tablets", "Chargers"]
+    },
+    {
+      "category": "Wellness",
+      "items": ["Yoga mats (2)", "Eye masks", "Bug repellant", "Microdose (psilocybin)", "Vyvanse"]
+    },
+    {
+      "category": "Creative",
+      "items": ["Journals (2)", "Paper & Poster board", "Markers", "Tape", "Sticky notes", "Handpan"]
+    },
+    {
+      "category": "Reading",
+      "items": ["Think and Grow Rich book"]
+    },
+    {
+      "category": "Kitchen",
+      "items": ["Coffee supplies", "Healthy snacks", "Dinner ingredients", "Lighter/matches for fire pit"]
+    }
+  ],
+  "prompts": {
+    "general": [
+      "What is my biggest limiting belief right now?",
+      "What is the one thing I must stop doing to achieve our Master Desire?",
+      "How can our partnership create something greater than the sum of its parts?",
+      "If money were no object, how would I spend my days?",
+      "What does 'success' mean to me personally?",
+      "What am I naturally curious about that could become a business?",
+      "What problems do I see in the world that I'm passionate about solving?",
+      "What would I do if I knew I couldn't fail?",
+      "How can I use my unique strengths to serve others?",
+      "What legacy do we want to create together?"
+    ],
+    "couples": [
+      "What does our 'dream life' look like in 5 years? Describe a perfect day.",
+      "What are you most afraid of when it comes to starting a business?",
+      "How do you want to feel on a daily basis once we've achieved our goals?",
+      "What limiting belief from your childhood might be holding you back?",
+      "When do you feel most alive and energized?",
+      "What do you need from me to feel supported in this journey?",
+      "How can we ensure our business serves our relationship, not the other way around?",
+      "What are you willing to sacrifice? What are you NOT willing to sacrifice?",
+      "What does 'enough' look like for you financially?",
+      "How do my strengths inspire you? How do yours inspire me?",
+      "What's one thing you've always wanted to try but haven't yet?",
+      "How can we stay connected when life gets busy?",
+      "What role does money play in your definition of success?",
+      "What are you most excited about in building something together?",
+      "If we could only pursue one business idea, what would be most meaningful?",
+      "How do we handle disagreements about business direction?",
+      "What does work-life balance mean to you?",
+      "What are your non-negotiables in how we run a business?",
+      "How can we build something that allows us to grow individually while growing together?",
+      "What would make you feel proud of what we create?"
+    ]
+  }
+}
