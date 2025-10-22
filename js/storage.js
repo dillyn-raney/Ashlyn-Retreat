@@ -167,10 +167,25 @@ const Storage = {
         return userName;
     },
 
+    // Get storage key for user's journals
+    getUserJournalKey(user) {
+        // Map known users to predefined keys
+        if (user === 'Dillyn') {
+            return this.keys.dillyn_journals;
+        } else if (user === 'Ashlee') {
+            return this.keys.ashlee_journals;
+        } else {
+            // For other users, create a dynamic key based on their name/email
+            // Sanitize the user name to create a valid storage key
+            const sanitized = user.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            return `ashlyn_retreat_${sanitized}_journals`;
+        }
+    },
+
     // Get journals for current user
     getUserJournals(user = null) {
         user = user || this.getCurrentUser();
-        const key = user === 'Dillyn' ? this.keys.dillyn_journals : this.keys.ashlee_journals;
+        const key = this.getUserJournalKey(user);
         return this.load(key, {
             daily: {},
             freeform: [],
@@ -181,7 +196,7 @@ const Storage = {
     // Save journals for current user
     saveUserJournals(data, user = null) {
         user = user || this.getCurrentUser();
-        const key = user === 'Dillyn' ? this.keys.dillyn_journals : this.keys.ashlee_journals;
+        const key = this.getUserJournalKey(user);
         return this.save(key, data);
     },
 

@@ -293,6 +293,13 @@ const FirebaseSync = {
         try {
             const keysToSync = Object.values(Storage.keys);
 
+            // Also sync the current user's journal key (in case it's a dynamic key for a third user)
+            const currentUser = Storage.getCurrentUser();
+            const currentUserJournalKey = Storage.getUserJournalKey(currentUser);
+            if (!keysToSync.includes(currentUserJournalKey)) {
+                keysToSync.push(currentUserJournalKey);
+            }
+
             for (const key of keysToSync) {
                 const firebaseData = await this.loadData(key);
                 // Only save if data exists and is not undefined
