@@ -50,6 +50,12 @@ const FirebaseSync = {
         if (user) {
             console.log('User logged in:', user.email);
             this.syncEnabled = true;
+
+            // Set current user based on email address
+            if (window.Storage && window.Storage.setCurrentUserFromEmail) {
+                window.Storage.setCurrentUserFromEmail(user.email);
+            }
+
             this.showApp();
 
             // Initialize app after authentication

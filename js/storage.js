@@ -131,6 +131,21 @@ const Storage = {
         });
     },
 
+    // Map email address to user name
+    getUserNameFromEmail(email) {
+        if (!email) return 'Dillyn'; // Default
+
+        const emailLower = email.toLowerCase();
+        if (emailLower === 'dillynraney@gmail.com') {
+            return 'Dillyn';
+        } else if (emailLower === 'ashleedubuc@gmail.com') {
+            return 'Ashlee';
+        } else {
+            // For other users, use their email
+            return email;
+        }
+    },
+
     // Get current user
     getCurrentUser() {
         const prefs = this.load(this.keys.user_preferences, { currentUser: 'Dillyn' });
@@ -142,6 +157,14 @@ const Storage = {
         const prefs = this.load(this.keys.user_preferences, {});
         prefs.currentUser = user;
         this.save(this.keys.user_preferences, prefs);
+    },
+
+    // Set current user from Firebase auth email
+    setCurrentUserFromEmail(email) {
+        const userName = this.getUserNameFromEmail(email);
+        this.setCurrentUser(userName);
+        console.log(`📝 Current user set to: ${userName} (from email: ${email})`);
+        return userName;
     },
 
     // Get journals for current user
