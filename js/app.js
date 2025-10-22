@@ -127,8 +127,17 @@ function setupEventListeners() {
     document.getElementById('exportValue')?.addEventListener('click', () => exportToolPDF('value'));
     document.getElementById('exportAction')?.addEventListener('click', () => exportToolPDF('action'));
 
-    // Shopping list print button
+    // Shopping list buttons
     document.getElementById('printShoppingList')?.addEventListener('click', printShoppingList);
+    document.getElementById('addShoppingItem')?.addEventListener('click', addShoppingItem);
+    document.getElementById('resetShoppingList')?.addEventListener('click', resetShoppingList);
+
+    // Enter key for adding shopping items
+    document.getElementById('customShoppingItem')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addShoppingItem();
+        }
+    });
 
     // Freeform journal
     document.getElementById('newFreeform')?.addEventListener('click', newFreeformEntry);
@@ -1098,6 +1107,10 @@ function renderShoppingList() {
     const container = document.getElementById('shoppingList');
     if (!container || !retreatData) return;
 
+    const shoppingData = Storage.getShoppingList();
+    const checkedItems = shoppingData.checked || {};
+    const customItems = shoppingData.custom || [];
+
     // Collect all ingredients from recipes
     const ingredients = new Set();
     retreatData.recipes.forEach(recipe => {
@@ -1114,26 +1127,52 @@ function renderShoppingList() {
 
     let html = `
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <h6 class="mb-3"><i class="bi bi-basket"></i> Recipe Ingredients (${sortedIngredients.length} items)</h6>
                 <ul class="shopping-list">
-                    ${sortedIngredients.map(item => `
-                        <li class="shopping-list-item">
-                            <input type="checkbox" class="shopping-checkbox" id="ingredient-${item.replace(/[^a-z0-9]/gi, '-')}">
-                            <label for="ingredient-${item.replace(/[^a-z0-9]/gi, '-')}">${item}</label>
-                        </li>
-                    `).join('')}
+                    ${sortedIngredients.map(item => {
+                        const itemId = `ingredient-${item.replace(/[^a-z0-9]/gi, '-')}`;
+                        const isChecked = checkedItems[itemId] ? 'checked' : '';
+                        return `
+                            <li class="shopping-list-item">
+                                <input type="checkbox" class="shopping-checkbox" id="${itemId}" ${isChecked} onchange="toggleShoppingItem('${itemId}')">
+                                <label for="${itemId}">${item}</label>
+                            </li>
+                        `;
+                    }).join('')}
                 </ul>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <h6 class="mb-3"><i class="bi bi-cookie"></i> Snacks (${snacks.length} items)</h6>
                 <ul class="shopping-list">
-                    ${snacks.map((item, index) => `
-                        <li class="shopping-list-item">
-                            <input type="checkbox" class="shopping-checkbox" id="snack-${index}">
-                            <label for="snack-${index}">${item}</label>
-                        </li>
-                    `).join('')}
+                    ${snacks.map((item, index) => {
+                        const itemId = `snack-${index}`;
+                        const isChecked = checkedItems[itemId] ? 'checked' : '';
+                        return `
+                            <li class="shopping-list-item">
+                                <input type="checkbox" class="shopping-checkbox" id="${itemId}" ${isChecked} onchange="toggleShoppingItem('${itemId}')">
+                                <label for="${itemId}">${item}</label>
+                            </li>
+                        `;
+                    }).join('')}
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h6 class="mb-3"><i class="bi bi-plus-square"></i> Other (${customItems.length} items)</h6>
+                <ul class="shopping-list">
+                    ${customItems.map(customItem => {
+                        const itemId = `custom-${customItem.id}`;
+                        const isChecked = checkedItems[itemId] ? 'checked' : '';
+                        return `
+                            <li class="shopping-list-item">
+                                <input type="checkbox" class="shopping-checkbox" id="${itemId}" ${isChecked} onchange="toggleShoppingItem('${itemId}')">
+                                <label for="${itemId}">${customItem.item}</label>
+                                <button class="btn btn-sm btn-link text-danger" onclick="deleteShoppingItem(${customItem.id})" title="Delete">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </li>
+                        `;
+                    }).join('')}
                 </ul>
             </div>
         </div>
@@ -1142,9 +1181,46 @@ function renderShoppingList() {
     container.innerHTML = html;
 }
 
+function toggleShoppingItem(itemId) {
+    Storage.toggleShoppingItem(itemId);
+    // No need to re-render, the checkbox state is already changed by the click
+}
+
+function addShoppingItem() {
+    const input = document.getElementById('customShoppingItem');
+    const item = input.value.trim();
+
+    if (!item) {
+        alert('Please enter an item name');
+        return;
+    }
+
+    Storage.addCustomShoppingItem(item);
+    input.value = '';
+    renderShoppingList();
+}
+
+function deleteShoppingItem(id) {
+    if (confirm('Remove this item from the list?')) {
+        Storage.deleteCustomShoppingItem(id);
+        renderShoppingList();
+    }
+}
+
+function resetShoppingList() {
+    if (confirm('Reset all checked items? This will not delete custom items.')) {
+        Storage.resetShoppingList();
+        renderShoppingList();
+    }
+}
+
 function printShoppingList() {
     window.print();
 }
+
+// Make functions global for onclick handlers
+window.toggleShoppingItem = toggleShoppingItem;
+window.deleteShoppingItem = deleteShoppingItem;
 
 // Supplies
 function renderSupplies() {

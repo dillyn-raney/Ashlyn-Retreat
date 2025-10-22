@@ -4,6 +4,7 @@ const Storage = {
     // Storage keys
     keys: {
         supplies: 'ashlyn_retreat_supplies',
+        shopping_list: 'ashlyn_retreat_shopping_list',
         dillyn_journals: 'ashlyn_retreat_dillyn_journals',
         ashlee_journals: 'ashlyn_retreat_ashlee_journals',
         swot_analyses: 'ashlyn_retreat_swot',
@@ -459,6 +460,49 @@ const Storage = {
         const kanban = this.getKanban();
         kanban[column] = kanban[column].filter(c => c.id !== cardId);
         return this.saveKanban(kanban);
+    },
+
+    // Shopping list management
+    getShoppingList() {
+        return this.load(this.keys.shopping_list, { checked: {}, custom: [] });
+    },
+
+    saveShoppingList(shoppingData) {
+        return this.save(this.keys.shopping_list, shoppingData);
+    },
+
+    toggleShoppingItem(itemId) {
+        const shopping = this.getShoppingList();
+        if (!shopping.checked) shopping.checked = {};
+        shopping.checked[itemId] = !shopping.checked[itemId];
+        this.saveShoppingList(shopping);
+        return shopping.checked[itemId];
+    },
+
+    addCustomShoppingItem(item) {
+        const shopping = this.getShoppingList();
+        if (!shopping.custom) shopping.custom = [];
+        shopping.custom.push({
+            id: Date.now(),
+            item: item,
+            createdAt: new Date().toISOString()
+        });
+        this.saveShoppingList(shopping);
+        return true;
+    },
+
+    deleteCustomShoppingItem(id) {
+        const shopping = this.getShoppingList();
+        if (!shopping.custom) return false;
+        shopping.custom = shopping.custom.filter(item => item.id !== id);
+        this.saveShoppingList(shopping);
+        return true;
+    },
+
+    resetShoppingList() {
+        const shopping = this.getShoppingList();
+        shopping.checked = {};
+        return this.saveShoppingList(shopping);
     }
 };
 

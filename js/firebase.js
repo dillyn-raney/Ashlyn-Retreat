@@ -139,6 +139,7 @@ const FirebaseSync = {
     // Keys that should be stored in shared workspace (not user-specific)
     sharedDataKeys: [
         'ashlyn_retreat_supplies',
+        'ashlyn_retreat_shopping_list',
         'ashlyn_retreat_swot',
         'ashlyn_retreat_ikigai',
         'ashlyn_retreat_value_prop',

@@ -1048,6 +1048,16 @@ h1, h2, h3, h4, h5, h6 {
     color: #999;
 }
 
+.shopping-list-item .btn-link {
+    padding: 0;
+    margin-left: auto;
+    text-decoration: none;
+}
+
+.shopping-list-item .btn-link:hover {
+    opacity: 0.7;
+}
+
 /* Print styles for shopping list */
 @media print {
     .shopping-list-item {
