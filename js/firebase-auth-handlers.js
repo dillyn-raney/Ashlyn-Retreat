@@ -21,12 +21,25 @@ function setupFirebaseUI() {
     });
 
     // Continue offline
-    document.getElementById('continueOffline')?.addEventListener('click', (e) => {
+    document.getElementById('continueOffline')?.addEventListener('click', async (e) => {
         e.preventDefault();
+        console.log('Continue Offline clicked - initializing app in offline mode');
+
+        // Disable Firebase sync
+        if (window.FirebaseSync) {
+            window.FirebaseSync.syncEnabled = false;
+            console.log('Firebase sync disabled');
+        }
+
+        // Hide auth modal
         document.getElementById('authModal').style.display = 'none';
+
         // Initialize app in offline mode
         if (window.initializeApp) {
-            window.initializeApp();
+            await window.initializeApp();
+            console.log('App initialized in offline mode');
+        } else {
+            console.error('initializeApp function not found');
         }
     });
 
