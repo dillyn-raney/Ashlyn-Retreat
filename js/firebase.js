@@ -380,49 +380,8 @@ const FirebaseSync = {
     }
 };
 
-// Enhanced Storage object that syncs with Firebase
-const OriginalStorage = window.Storage;
-
-window.Storage = {
-    ...OriginalStorage,
-
-    // Override save to also save to Firebase
-    save(key, data) {
-        console.log('Storage.save called:', key, 'syncEnabled:', FirebaseSync.syncEnabled);
-
-        // Save to localStorage first
-        const localSaved = OriginalStorage.save(key, data);
-
-        // Then sync to Firebase if enabled
-        if (FirebaseSync.syncEnabled) {
-            console.log('Syncing to Firebase:', key);
-            FirebaseSync.saveData(key, data).then(() => {
-                console.log('✅ Firebase sync successful:', key);
-            }).catch(err => {
-                console.error('❌ Firebase sync failed:', err);
-            });
-        } else {
-            console.warn('⚠️ Firebase sync disabled for:', key);
-        }
-
-        return localSaved;
-    },
-
-    // Load prioritizes Firebase if available
-    async loadWithSync(key, defaultValue = null) {
-        if (FirebaseSync.syncEnabled) {
-            const firebaseData = await FirebaseSync.loadData(key);
-            if (firebaseData !== null) {
-                // Update localStorage with Firebase data
-                OriginalStorage.save(key, firebaseData);
-                return firebaseData;
-            }
-        }
-
-        // Fall back to localStorage
-        return OriginalStorage.load(key, defaultValue);
-    }
-};
+// Note: Firebase sync is now handled directly in storage.js
+// storage.js checks for window.FirebaseSync and calls saveData() when available
 
 // Export for use in other modules
 window.FirebaseSync = FirebaseSync;

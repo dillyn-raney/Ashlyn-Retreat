@@ -14,10 +14,23 @@ const Storage = {
         user_preferences: 'ashlyn_retreat_preferences'
     },
 
-    // Save data to localStorage
+    // Save data to localStorage (and Firebase if enabled)
     save(key, data) {
         try {
             localStorage.setItem(key, JSON.stringify(data));
+
+            // Sync to Firebase if available and enabled
+            if (window.FirebaseSync && window.FirebaseSync.syncEnabled) {
+                console.log('Storage.save: Syncing to Firebase:', key);
+                window.FirebaseSync.saveData(key, data).then(() => {
+                    console.log('✅ Firebase sync successful:', key);
+                }).catch(err => {
+                    console.error('❌ Firebase sync failed:', key, err);
+                });
+            } else {
+                console.log('⚠️ Firebase not available or disabled for:', key);
+            }
+
             return true;
         } catch (e) {
             console.error('Storage failed:', e);
