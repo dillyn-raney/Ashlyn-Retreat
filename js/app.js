@@ -880,12 +880,41 @@ function renderSupplies() {
     const container = document.getElementById('suppliesList');
     if (!container || !retreatData) return;
 
-    const savedSupplies = Storage.getSupplies();
+    const suppliesData = Storage.getSupplies();
+    const savedSupplies = suppliesData.checked || {};
+    const customSupplies = suppliesData.custom || [];
 
-    container.innerHTML = retreatData.supplies.map((category, catIndex) => `
-        <div class="supply-category">
-            <h5 class="supply-category-title">${category.category}</h5>
-            ${category.items.map((item, itemIndex) => {
+    // Group custom supplies by category
+    const customByCategory = {};
+    customSupplies.forEach(supply => {
+        if (!customByCategory[supply.category]) {
+            customByCategory[supply.category] = [];
+        }
+        customByCategory[supply.category].push(supply);
+    });
+
+    // Get all unique categories (default + custom)
+    const allCategories = [...new Set([
+        ...retreatData.supplies.map(c => c.category),
+        ...Object.keys(customByCategory)
+    ])];
+
+    container.innerHTML = allCategories.map(categoryName => {
+        const defaultCategory = retreatData.supplies.find(c => c.category === categoryName);
+        const customItems = customByCategory[categoryName] || [];
+
+        let html = `<div class="supply-category">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="supply-category-title mb-0">${categoryName}</h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="showAddSupplyModal('${categoryName}')">
+                    <i class="bi bi-plus-lg"></i> Add Item
+                </button>
+            </div>`;
+
+        // Render default items
+        if (defaultCategory) {
+            html += defaultCategory.items.map((item, itemIndex) => {
+                const catIndex = retreatData.supplies.indexOf(defaultCategory);
                 const key = `${catIndex}_${itemIndex}`;
                 const checked = savedSupplies[key] || false;
                 return `
@@ -894,9 +923,32 @@ function renderSupplies() {
                         <label>${item}</label>
                     </div>
                 `;
-            }).join('')}
-        </div>
-    `).join('');
+            }).join('');
+        }
+
+        // Render custom items
+        html += customItems.map(supply => {
+            const key = `custom_${supply.id}`;
+            const checked = savedSupplies[key] || false;
+            return `
+                <div class="supply-item ${checked ? 'checked' : ''}" onclick="toggleCustomSupply(${supply.id})">
+                    <input type="checkbox" ${checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleCustomSupply(${supply.id})">
+                    <label>${supply.item}</label>
+                    <div class="supply-item-actions">
+                        <button class="btn btn-sm btn-link text-primary" onclick="event.stopPropagation(); editSupply(${supply.id}, '${supply.category.replace(/'/g, "\\'")}', '${supply.item.replace(/'/g, "\\'")}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-link text-danger" onclick="event.stopPropagation(); deleteSupply(${supply.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        html += '</div>';
+        return html;
+    }).join('');
 
     updateSuppliesProgress();
 }
@@ -904,6 +956,88 @@ function renderSupplies() {
 function toggleSupply(category, itemIndex) {
     Storage.toggleSupply(category, itemIndex);
     renderSupplies();
+}
+
+function toggleCustomSupply(id) {
+    const supplies = Storage.getSupplies();
+    if (!supplies.checked) supplies.checked = {};
+    const key = `custom_${id}`;
+    supplies.checked[key] = !supplies.checked[key];
+    Storage.saveSupplies(supplies);
+    renderSupplies();
+}
+
+function showAddSupplyModal(category) {
+    const modal = document.getElementById('supplyModal');
+    const modalTitle = document.getElementById('supplyModalTitle');
+    const categoryInput = document.getElementById('supplyCategory');
+    const itemInput = document.getElementById('supplyItem');
+    const saveBtn = document.getElementById('saveSupplyBtn');
+
+    modalTitle.textContent = 'Add Supply Item';
+    categoryInput.value = category;
+    itemInput.value = '';
+
+    // Remove old event listener and add new one
+    const newSaveBtn = saveBtn.cloneNode(true);
+    saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+    newSaveBtn.addEventListener('click', () => {
+        const cat = categoryInput.value.trim();
+        const item = itemInput.value.trim();
+
+        if (!cat || !item) {
+            alert('Please enter both category and item name');
+            return;
+        }
+
+        Storage.addCustomSupply(cat, item);
+        renderSupplies();
+        bootstrap.Modal.getInstance(modal).hide();
+    });
+
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+function editSupply(id, category, item) {
+    const modal = document.getElementById('supplyModal');
+    const modalTitle = document.getElementById('supplyModalTitle');
+    const categoryInput = document.getElementById('supplyCategory');
+    const itemInput = document.getElementById('supplyItem');
+    const saveBtn = document.getElementById('saveSupplyBtn');
+
+    modalTitle.textContent = 'Edit Supply Item';
+    categoryInput.value = category;
+    itemInput.value = item;
+
+    // Remove old event listener and add new one
+    const newSaveBtn = saveBtn.cloneNode(true);
+    saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+    newSaveBtn.addEventListener('click', () => {
+        const cat = categoryInput.value.trim();
+        const itemText = itemInput.value.trim();
+
+        if (!cat || !itemText) {
+            alert('Please enter both category and item name');
+            return;
+        }
+
+        Storage.editCustomSupply(id, cat, itemText);
+        renderSupplies();
+        bootstrap.Modal.getInstance(modal).hide();
+    });
+
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+function deleteSupply(id) {
+    if (confirm('Are you sure you want to delete this item?')) {
+        Storage.deleteCustomSupply(id);
+        renderSupplies();
+    }
 }
 
 function resetSupplies() {
@@ -915,19 +1049,29 @@ function resetSupplies() {
 
 function updateSuppliesProgress() {
     // Count total and checked items
-    const supplies = Storage.getSupplies();
+    const suppliesData = Storage.getSupplies();
+    const savedSupplies = suppliesData.checked || {};
+    const customSupplies = suppliesData.custom || [];
     let total = 0;
     let checked = 0;
 
+    // Count default supplies
     if (retreatData) {
         retreatData.supplies.forEach((category, catIndex) => {
             category.items.forEach((item, itemIndex) => {
                 total++;
                 const key = `${catIndex}_${itemIndex}`;
-                if (supplies[key]) checked++;
+                if (savedSupplies[key]) checked++;
             });
         });
     }
+
+    // Count custom supplies
+    customSupplies.forEach(supply => {
+        total++;
+        const key = `custom_${supply.id}`;
+        if (savedSupplies[key]) checked++;
+    });
 
     const percentage = total > 0 ? Math.round((checked / total) * 100) : 0;
 

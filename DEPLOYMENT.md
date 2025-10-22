@@ -47,7 +47,7 @@ git add .
 git commit -m "Initial commit - Ashlyn Retreat application"
 
 # Add GitHub remote (replace with your repo URL)
-git remote add origin https://github.com/YOUR-USERNAME/ashlyn-retreat.git
+git remote add origin https://github.com/dillyn-raney/Ashlyn-Retreat.git
 
 # Push to GitHub
 git branch -M main

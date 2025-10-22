@@ -235,7 +235,7 @@ const Storage = {
 
     // Supplies management
     getSupplies() {
-        return this.load(this.keys.supplies, {});
+        return this.load(this.keys.supplies, { checked: {}, custom: [] });
     },
 
     saveSupplies(suppliesData) {
@@ -244,21 +244,63 @@ const Storage = {
 
     toggleSupply(category, itemIndex) {
         const supplies = this.getSupplies();
+        if (!supplies.checked) supplies.checked = {};
         const key = `${category}_${itemIndex}`;
-        supplies[key] = !supplies[key];
+        supplies.checked[key] = !supplies.checked[key];
         this.saveSupplies(supplies);
-        return supplies[key];
+        return supplies.checked[key];
     },
 
     resetSupplies() {
-        return this.save(this.keys.supplies, {});
+        const supplies = this.getSupplies();
+        supplies.checked = {};
+        return this.save(this.keys.supplies, supplies);
     },
 
     getSuppliesProgress() {
         const supplies = this.getSupplies();
-        const checkedCount = Object.values(supplies).filter(v => v).length;
-        const totalCount = Object.keys(supplies).length;
+        const checkedCount = Object.values(supplies.checked || {}).filter(v => v).length;
+        const totalCount = Object.keys(supplies.checked || {}).length;
         return totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
+    },
+
+    // Custom supplies management
+    getCustomSupplies() {
+        const supplies = this.getSupplies();
+        return supplies.custom || [];
+    },
+
+    addCustomSupply(category, item) {
+        const supplies = this.getSupplies();
+        if (!supplies.custom) supplies.custom = [];
+        supplies.custom.push({
+            id: Date.now(),
+            category: category,
+            item: item,
+            createdAt: new Date().toISOString()
+        });
+        this.saveSupplies(supplies);
+        return true;
+    },
+
+    editCustomSupply(id, category, item) {
+        const supplies = this.getSupplies();
+        if (!supplies.custom) return false;
+        const index = supplies.custom.findIndex(s => s.id === id);
+        if (index === -1) return false;
+        supplies.custom[index].category = category;
+        supplies.custom[index].item = item;
+        supplies.custom[index].updatedAt = new Date().toISOString();
+        this.saveSupplies(supplies);
+        return true;
+    },
+
+    deleteCustomSupply(id) {
+        const supplies = this.getSupplies();
+        if (!supplies.custom) return false;
+        supplies.custom = supplies.custom.filter(s => s.id !== id);
+        this.saveSupplies(supplies);
+        return true;
     },
 
     // Kanban management
