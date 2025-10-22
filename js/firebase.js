@@ -388,14 +388,21 @@ window.Storage = {
 
     // Override save to also save to Firebase
     save(key, data) {
+        console.log('Storage.save called:', key, 'syncEnabled:', FirebaseSync.syncEnabled);
+
         // Save to localStorage first
         const localSaved = OriginalStorage.save(key, data);
 
         // Then sync to Firebase if enabled
         if (FirebaseSync.syncEnabled) {
-            FirebaseSync.saveData(key, data).catch(err => {
-                console.error('Firebase sync failed:', err);
+            console.log('Syncing to Firebase:', key);
+            FirebaseSync.saveData(key, data).then(() => {
+                console.log('✅ Firebase sync successful:', key);
+            }).catch(err => {
+                console.error('❌ Firebase sync failed:', err);
             });
+        } else {
+            console.warn('⚠️ Firebase sync disabled for:', key);
         }
 
         return localSaved;
