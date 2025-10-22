@@ -16,12 +16,16 @@ const Storage = {
 
     // Save data to localStorage (and Firebase if enabled)
     save(key, data) {
+        console.log('💾 Storage.save called for:', key);
+        console.log('   FirebaseSync exists?', !!window.FirebaseSync);
+        console.log('   FirebaseSync.syncEnabled?', window.FirebaseSync?.syncEnabled);
+
         try {
             localStorage.setItem(key, JSON.stringify(data));
 
             // Sync to Firebase if available and enabled
             if (window.FirebaseSync && window.FirebaseSync.syncEnabled) {
-                console.log('Storage.save: Syncing to Firebase:', key);
+                console.log('🔄 Storage.save: Syncing to Firebase:', key);
                 window.FirebaseSync.saveData(key, data).then(() => {
                     console.log('✅ Firebase sync successful:', key);
                 }).catch(err => {
@@ -29,6 +33,8 @@ const Storage = {
                 });
             } else {
                 console.log('⚠️ Firebase not available or disabled for:', key);
+                console.log('   window.FirebaseSync:', window.FirebaseSync);
+                console.log('   syncEnabled:', window.FirebaseSync?.syncEnabled);
             }
 
             return true;
