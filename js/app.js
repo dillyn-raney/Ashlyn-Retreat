@@ -642,7 +642,60 @@ function saveIkigai() {
         data[field.dataset.field] = field.value;
     });
     Storage.saveToolData('ikigai', data);
+    updateIkigaiDiagram(data);
     showSaveIndicator('ikigaiSaveIndicator', 'saved');
+}
+
+function updateIkigaiDiagram(data) {
+    const svg = document.querySelector('#ikigaiDiagram svg');
+    if (!svg) return;
+
+    // Remove existing dynamic text elements
+    svg.querySelectorAll('.ikigai-content-text').forEach(el => el.remove());
+
+    // Helper to wrap text
+    function wrapText(text, maxLength) {
+        if (!text) return [];
+        const words = text.split(' ');
+        const lines = [];
+        let currentLine = '';
+
+        words.forEach(word => {
+            if ((currentLine + word).length > maxLength) {
+                if (currentLine) lines.push(currentLine.trim());
+                currentLine = word + ' ';
+            } else {
+                currentLine += word + ' ';
+            }
+        });
+        if (currentLine) lines.push(currentLine.trim());
+        return lines.slice(0, 3); // Max 3 lines
+    }
+
+    // Add text to each circle
+    const positions = {
+        love: { x: 150, y: 140, color: '#4A5D5A' },
+        goodAt: { x: 250, y: 140, color: '#4A5D5A' },
+        worldNeeds: { x: 150, y: 260, color: '#4A5D5A' },
+        paidFor: { x: 250, y: 260, color: '#4A5D5A' }
+    };
+
+    Object.entries(positions).forEach(([field, pos]) => {
+        const text = data[field] || '';
+        const lines = wrapText(text, 15);
+
+        lines.forEach((line, i) => {
+            const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            textEl.setAttribute('x', pos.x);
+            textEl.setAttribute('y', pos.y + (i * 12));
+            textEl.setAttribute('text-anchor', 'middle');
+            textEl.setAttribute('class', 'ikigai-content-text');
+            textEl.setAttribute('fill', pos.color);
+            textEl.setAttribute('font-size', '10');
+            textEl.textContent = line;
+            svg.appendChild(textEl);
+        });
+    });
 }
 
 function saveSWOT() {
@@ -682,6 +735,7 @@ function loadToolsData() {
         const fieldEl = document.querySelector(`[data-tool="ikigai"][data-field="${field}"]`);
         if (fieldEl && value) fieldEl.value = value;
     });
+    updateIkigaiDiagram(ikigaiData);
 
     // Load SWOT
     const swotData = Storage.getToolData('swot_analyses');
@@ -1148,6 +1202,24 @@ function exportJournalPDF(type) {
             addText(`1. ${data.gratitude1 || 'N/A'}`, 11);
             addText(`2. ${data.gratitude2 || 'N/A'}`, 11);
             addText(`3. ${data.gratitude3 || 'N/A'}`, 11);
+            yPos += 5;
+
+            addText('Action Items:', 14, 'bold');
+            addText(`1. ${data.action1 || 'N/A'}`, 11);
+            addText(`2. ${data.action2 || 'N/A'}`, 11);
+            addText(`3. ${data.action3 || 'N/A'}`, 11);
+            yPos += 5;
+
+            addText('Challenges:', 14, 'bold');
+            addText(data.challenges || 'N/A', 11);
+            yPos += 5;
+
+            addText('Ideas:', 14, 'bold');
+            addText(data.ideas || 'N/A', 11);
+            yPos += 5;
+
+            addText('Tomorrow\'s Focus:', 14, 'bold');
+            addText(data.tomorrow || 'N/A', 11);
         }
     } else if (type === 'future') {
         const data = Storage.getFutureLetter(currentUser);
@@ -1193,14 +1265,141 @@ function exportToolPDF(tool) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    doc.setFontSize(18);
-    doc.text(`${tool.toUpperCase()} - ${currentUser}`, 20, 20);
+    let yPos = 20;
+    const pageHeight = doc.internal.pageSize.height;
+    const marginBottom = 20;
 
-    // Add tool-specific content
-    // This is simplified - you'd want to format each tool's data appropriately
+    // Helper to add text with page breaks
+    const addText = (text, fontSize = 12, style = 'normal') => {
+        doc.setFontSize(fontSize);
+        doc.setFont('helvetica', style);
+
+        const lines = doc.splitTextToSize(text, 170);
+        lines.forEach(line => {
+            if (yPos > pageHeight - marginBottom) {
+                doc.addPage();
+                yPos = 20;
+            }
+            doc.text(line, 20, yPos);
+            yPos += fontSize / 2 + 2;
+        });
+    };
+
+    if (tool === 'ikigai') {
+        const data = Storage.getToolData('ikigai');
+        addText(`Ikigai Diagram - ${currentUser}`, 18, 'bold');
+        yPos += 10;
+
+        addText('What You LOVE:', 14, 'bold');
+        addText(data.love || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('What You\'re GOOD AT:', 14, 'bold');
+        addText(data.goodAt || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('What You Can Be PAID FOR:', 14, 'bold');
+        addText(data.paidFor || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('What The World NEEDS:', 14, 'bold');
+        addText(data.worldNeeds || 'Not yet filled in', 11);
+
+    } else if (tool === 'swot') {
+        const data = Storage.getToolData('swot_analyses');
+        addText(`SWOT Analysis - ${currentUser}`, 18, 'bold');
+        yPos += 10;
+
+        addText('Strengths:', 14, 'bold');
+        addText(data.strengths || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Weaknesses:', 14, 'bold');
+        addText(data.weaknesses || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Opportunities:', 14, 'bold');
+        addText(data.opportunities || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Threats:', 14, 'bold');
+        addText(data.threats || 'Not yet filled in', 11);
+
+    } else if (tool === 'value') {
+        const data = Storage.getToolData('value_prop');
+        addText(`Value Proposition Canvas - ${currentUser}`, 18, 'bold');
+        yPos += 10;
+
+        addText('CUSTOMER PROFILE', 16, 'bold');
+        yPos += 5;
+
+        addText('Customer Jobs:', 14, 'bold');
+        addText(data.customerJobs || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Pains:', 14, 'bold');
+        addText(data.pains || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Gains:', 14, 'bold');
+        addText(data.gains || 'Not yet filled in', 11);
+        yPos += 10;
+
+        addText('VALUE MAP', 16, 'bold');
+        yPos += 5;
+
+        addText('Products/Services:', 14, 'bold');
+        addText(data.products || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Pain Relievers:', 14, 'bold');
+        addText(data.painRelievers || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Gain Creators:', 14, 'bold');
+        addText(data.gainCreators || 'Not yet filled in', 11);
+
+    } else if (tool === 'action') {
+        const data = Storage.getToolData('action_plan');
+        addText(`90-Day Action Plan - ${currentUser}`, 18, 'bold');
+        yPos += 10;
+
+        addText('Business Idea:', 14, 'bold');
+        addText(data.businessIdea || 'Not yet filled in', 11);
+        yPos += 5;
+
+        addText('Vision Statement:', 14, 'bold');
+        addText(data.vision || 'Not yet filled in', 11);
+        yPos += 10;
+
+        addText('MONTH 1', 16, 'bold');
+        yPos += 5;
+        addText('Goal:', 14, 'bold');
+        addText(data.month1Goal || 'Not yet filled in', 11);
+        yPos += 5;
+        addText('Milestones:', 14, 'bold');
+        addText(data.month1Milestones || 'Not yet filled in', 11);
+        yPos += 10;
+
+        addText('MONTH 2', 16, 'bold');
+        yPos += 5;
+        addText('Goal:', 14, 'bold');
+        addText(data.month2Goal || 'Not yet filled in', 11);
+        yPos += 5;
+        addText('Milestones:', 14, 'bold');
+        addText(data.month2Milestones || 'Not yet filled in', 11);
+        yPos += 10;
+
+        addText('MONTH 3', 16, 'bold');
+        yPos += 5;
+        addText('Goal:', 14, 'bold');
+        addText(data.month3Goal || 'Not yet filled in', 11);
+        yPos += 5;
+        addText('Milestones:', 14, 'bold');
+        addText(data.month3Milestones || 'Not yet filled in', 11);
+    }
 
     doc.save(`${currentUser}-${tool}-${new Date().toISOString().split('T')[0]}.pdf`);
-    alert('Export complete!');
 }
 
 // Smooth Scrolling

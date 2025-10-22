@@ -88,29 +88,6 @@ function setupFirebaseUI() {
         }
     });
 
-    // Migrate to shared workspace button
-    document.getElementById('migrateToSharedBtn')?.addEventListener('click', async () => {
-        if (confirm('This will move business tools (SWOT, Ikigai, Kanban, etc.) to a shared workspace accessible by both retreat participants. Journals remain private. Continue?')) {
-            const btn = document.getElementById('migrateToSharedBtn');
-            const originalHTML = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Migrating...';
-
-            const result = await FirebaseSync.migrateToSharedWorkspace();
-
-            btn.disabled = false;
-            btn.innerHTML = originalHTML;
-
-            if (result.success) {
-                alert(`✅ Migration complete!\n\n${result.message}\n\nMigrated: ${result.migratedKeys.join(', ')}`);
-                // Reload data to see shared workspace in action
-                if (window.onDataSynced) window.onDataSynced();
-            } else {
-                alert(`❌ Migration failed: ${result.message}`);
-            }
-        }
-    });
-
     // Enter key handlers
     document.getElementById('signInPassword')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
