@@ -27,8 +27,6 @@ functions/.runtimeconfig.json
 functions/lib/
 
 # Config files with sensitive data (keep local only)
-# The .example.js versions will be committed
+# The main config files are now safe to commit (no API keys, use Cloud Functions)
 js/gemini-config.local.js
 js/firebase-config.local.js
-js/firebase-config.js
-js/gemini-config.js

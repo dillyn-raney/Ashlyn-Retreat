@@ -2,197 +2,222 @@
 
 ## Overview
 
-The app uses two configuration files that are **NOT tracked in git** for security:
-- `js/firebase-config.js` - Firebase credentials
-- `js/gemini-config.js` - Gemini AI API key
+The app's configuration files are now **SAFE TO COMMIT** to git:
+- `js/firebase-config.js` - Contains public Firebase config (domain-restricted)
+- `js/gemini-config.js` - Uses Cloud Functions (no API key in client)
 
-These files are in `.gitignore` and won't be deployed to GitHub Pages.
+**All sensitive API keys are stored securely in Firebase Cloud Functions.**
 
 ## How It Works
 
-### Config Loader System
+### Firebase Configuration
+Firebase API keys are **public identifiers** that are domain-restricted:
+- Safe to commit to public repositories
+- Only work from authorized domains (dillyn-raney.github.io)
+- Firebase security rules control actual data access
 
-The app uses `js/config-loader.js` which:
-1. Sets default configs (disabled state)
-2. Attempts to load `firebase-config.js` if it exists
-3. Attempts to load `gemini-config.js` if it exists
-4. Handles missing files gracefully
+### Gemini AI Configuration
+Gemini API key is **stored in Firebase Functions**:
+- Client code has `apiKey: ""` (empty)
+- `useCloudFunctions: true` routes requests through Firebase
+- API key is never exposed to browser
+- Stored securely with: `firebase functions:config:set gemini.apikey="YOUR_KEY"`
 
-### Three Deployment Scenarios
+## Deployment
 
-#### 1. Local Development (Full Features)
+### GitHub Pages (Production)
 ```
-✅ firebase-config.js exists (your credentials)
-✅ gemini-config.js exists (your API key)
-✅ All features enabled
-```
-
-#### 2. GitHub Pages (Basic Features)
-```
-❌ firebase-config.js missing (gitignored)
-❌ gemini-config.js missing (gitignored)
-✅ App works in offline mode
-✅ All features work except sync and AI
+✅ firebase-config.js committed (safe public config)
+✅ gemini-config.js committed (uses Cloud Functions)
+✅ All features work
+✅ API keys secured in Firebase backend
 ```
 
-#### 3. Custom Deployment (Your Choice)
+### Local Development
 ```
-You can create config files on your server
-Configure which features to enable
-Mix and match as needed
-```
-
-## Setting Up Configs
-
-### For Local Development
-
-1. **Copy the example files:**
-   ```bash
-   cp js/firebase-config.example.js js/firebase-config.js
-   cp js/gemini-config.example.js js/gemini-config.js
-   ```
-
-2. **Edit `js/firebase-config.js`:**
-   - Add your Firebase credentials
-   - Set `enabled: true`
-
-3. **Edit `js/gemini-config.js`:**
-   - Add your Gemini API key (if not using Cloud Functions)
-   - Set `enabled: true`
-   - Set `useCloudFunctions: true` for production
-
-### For GitHub Pages Deployment
-
-**Nothing to do!** The app works without config files:
-- Runs in offline mode
-- LocalStorage for data persistence
-- All features work except:
-  - Cloud sync
-  - AI insights
-
-### For Custom Server Deployment
-
-1. Upload config files to your server
-2. Place them in the `js/` directory
-3. Ensure proper permissions (readable by web server)
-4. The app will detect and use them automatically
-
-## Console Messages
-
-### Without Config Files
-```
-ℹ️ Firebase config not found - using defaults (offline mode)
-ℹ️ Gemini config not found - AI features disabled
-Firebase disabled, running in offline mode
+✅ Same files as production
+✅ All features work
+✅ API keys secured in Firebase backend
 ```
 
-### With Config Files
+## Security Model
+
+### What's Public (Safe to Commit)
+- Firebase API keys - Domain-restricted
+- Firebase project IDs
+- Firebase auth domain
+- Gemini config with `useCloudFunctions: true`
+
+### What's Private (Secured in Firebase)
+- Gemini API key - In Cloud Functions environment
+- Firebase security rules - Control data access
+- User authentication - Handled by Firebase
+
+### Protection Layers
+1. **Firebase API Keys**: Domain-restricted to dillyn-raney.github.io
+2. **Firebase Security Rules**: Control who can read/write data
+3. **Cloud Functions**: Proxy Gemini requests, keep API key secret
+4. **Authentication**: Required for accessing user data
+
+## Initial Setup (One-Time)
+
+### 1. Firebase Project
+Already configured with:
+- Project: ashlyn-retreat
+- Authentication enabled
+- Realtime Database created
+- Security rules deployed
+
+### 2. Cloud Functions
+Already deployed with Gemini API key:
+```bash
+cd functions
+firebase functions:config:set gemini.apikey="YOUR_ACTUAL_KEY"
+firebase deploy --only functions
 ```
-✅ Firebase config loaded
-✅ Gemini config loaded
-Firebase initialized successfully
+
+### 3. Config Files
+Already committed with safe values:
+- `js/firebase-config.js` - Public Firebase config
+- `js/gemini-config.js` - Cloud Functions enabled
+
+## No Setup Required!
+
+The app is **ready to use** on GitHub Pages:
+- ✅ Firebase sync works
+- ✅ AI features work
+- ✅ All data is secure
+- ✅ No local config needed
+
+## Making Changes
+
+### Update Firebase Config
+Edit `js/firebase-config.js`:
+```javascript
+window.firebaseFeatures = {
+    enabled: true,  // Toggle Firebase on/off
+    offlineSupport: true,
+    autoSync: true,
+    syncInterval: 5000
+};
 ```
 
-## Security Notes
+### Update Gemini Config
+Edit `js/gemini-config.js`:
+```javascript
+const geminiConfig = {
+    enabled: true,  // Toggle AI features
+    useCloudFunctions: true,  // Always true for production
+    apiKey: "",  // Always empty (key in Cloud Functions)
+    // ...
+};
+```
 
-### What's Protected
-- Firebase API keys (domain-restricted, but still private)
-- Gemini API keys (billable, keep private)
-- Database URLs
-- Project IDs
-
-### What's Safe to Commit
-- All `.example.js` files (have placeholder values)
-- `config-loader.js` (default configs only)
-- All other app code
-
-### Best Practices
-1. ✅ Keep config files in `.gitignore`
-2. ✅ Use Cloud Functions for Gemini in production
-3. ✅ Restrict Firebase API keys to your domain
-4. ✅ Use Firebase security rules
-5. ❌ Never commit real API keys to git
-6. ❌ Never share config files publicly
+### Update Gemini API Key (Cloud Functions)
+```bash
+cd functions
+firebase functions:config:set gemini.apikey="NEW_KEY"
+firebase deploy --only functions
+```
 
 ## Troubleshooting
 
-### App Not Loading
-- Check browser console for errors
-- Verify `config-loader.js` is loading
-- Hard refresh (Ctrl+F5)
+### Firebase Not Working
+**Check:**
+1. Firebase config enabled: `window.firebaseFeatures.enabled = true`
+2. Security rules deployed to Firebase console
+3. User is authenticated (signed in)
 
-### Features Not Working
-**Firebase/Sync Issues:**
-- Verify `firebase-config.js` exists (local only)
-- Check `enabled: true` in config
-- Verify Firebase console settings
+**Console shows:**
+```
+✅ Firebase initialized successfully
+✅ User logged in: user@example.com
+```
 
-**AI Features Not Working:**
-- Verify `gemini-config.js` exists (local only)
-- Check `enabled: true` in config
-- Verify API key is correct
-- Check Cloud Functions are deployed
+### AI Features Not Working
+**Check:**
+1. Gemini config enabled: `geminiConfig.enabled = true`
+2. Cloud Functions enabled: `useCloudFunctions: true`
+3. Cloud Functions deployed: `firebase deploy --only functions`
+4. API key set: `firebase functions:config:get`
 
-### 404 Errors for Config Files
-**This is normal on GitHub Pages!**
-- Config files are gitignored
-- Config loader handles this gracefully
-- App runs in offline mode
-- See console for informative messages
+**Console shows:**
+```
+✅ Gemini Cloud Functions initialized
+✅ Generated insight successfully
+```
+
+### "API key not configured"
+This means Cloud Functions aren't set up:
+```bash
+cd functions
+firebase functions:config:set gemini.apikey="YOUR_KEY"
+firebase deploy --only functions
+```
 
 ## File Structure
 
 ```
 js/
-├── config-loader.js           ✅ Committed (safe defaults)
-├── firebase-config.example.js ✅ Committed (template)
-├── firebase-config.js         ❌ Gitignored (your credentials)
-├── gemini-config.example.js   ✅ Committed (template)
-├── gemini-config.js           ❌ Gitignored (your API key)
+├── firebase-config.js         ✅ Committed (safe public values)
+├── gemini-config.js           ✅ Committed (uses Cloud Functions)
 ├── firebase.js                ✅ Committed (app logic)
-├── gemini.js                  ✅ Committed (app logic)
+├── gemini-cloud.js            ✅ Committed (Cloud Functions integration)
+├── gemini.js                  ✅ Committed (AI logic)
+└── ...
+
+functions/
+├── index.js                   ✅ Committed (Cloud Functions code)
+├── .runtimeconfig.json        ❌ Gitignored (local only)
 └── ...
 ```
 
-## Quick Reference
+## Migration from Old Setup
 
-### Start From Scratch
+If you had the old setup with gitignored configs:
+
+### Remove from .gitignore
+These are now safe to commit:
+- `js/firebase-config.js`
+- `js/gemini-config.js`
+
+### Update Configs
+1. Replace `firebase-config.js` with the version in this repo
+2. Replace `gemini-config.js` with the version in this repo
+3. Commit both files
+
+### Move API Key
+If you had Gemini API key in client config:
 ```bash
-# Clone repo
-git clone https://github.com/dillyn-raney/Ashlyn-Retreat.git
-cd Ashlyn-Retreat
-
-# Copy example configs
-cp js/firebase-config.example.js js/firebase-config.js
-cp js/gemini-config.example.js js/gemini-config.js
-
-# Edit configs with your credentials
-# Then open index.html or deploy
+cd functions
+firebase functions:config:set gemini.apikey="YOUR_KEY_FROM_OLD_CONFIG"
+firebase deploy --only functions
 ```
 
-### Check Current Config Status
-Open browser console and look for:
-- ✅ "Firebase config loaded" = Config file found
-- ℹ️ "Firebase config not found" = Using defaults (offline mode)
-- Same for Gemini config
+## Benefits
 
-### Force Offline Mode
-Even if you have config files, you can disable features:
-```javascript
-// In firebase-config.js
-window.firebaseFeatures.enabled = false;
+### Security
+- API keys never exposed in browser
+- Firebase keys are domain-restricted
+- Cloud Functions proxy sensitive requests
 
-// In gemini-config.js
-window.geminiConfig.enabled = false;
-```
+### Deployment
+- Simple git push to deploy
+- No environment variables to manage
+- Works on any hosting platform
+
+### Collaboration
+- Team members get same config
+- No local setup required
+- Consistent across all environments
 
 ## Related Documentation
 
-- `FIREBASE_SETUP.md` - How to set up Firebase
-- `GEMINI_SETUP.md` - How to set up Gemini AI
-- `SHARED_WORKSPACE_SUMMARY.md` - Firebase shared workspace
-- `FIREBASE_SECURITY_RULES.md` - Firebase security configuration
+- `FIREBASE_SETUP.md` - Firebase project setup
+- `GEMINI_SETUP.md` - Gemini AI setup
+- `CLOUD_FUNCTIONS_SETUP.md` - Cloud Functions deployment
+- `FIREBASE_SECURITY_RULES.md` - Database security
 
 ---
 
-**Remember:** The app is designed to work perfectly with OR without these config files. Choose the setup that works best for you!
+**The app is production-ready with all API keys secured!**
