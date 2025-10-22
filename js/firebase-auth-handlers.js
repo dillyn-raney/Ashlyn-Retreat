@@ -25,19 +25,29 @@ function setupFirebaseUI() {
         e.preventDefault();
         console.log('Continue Offline clicked - initializing app in offline mode');
 
-        // Disable Firebase sync
+        // Disable Firebase sync and prevent auth modal from showing again
         if (window.FirebaseSync) {
             window.FirebaseSync.syncEnabled = false;
-            console.log('Firebase sync disabled');
+            window.FirebaseSync.offlineMode = true; // Flag to prevent showAuth() from displaying modal
+            console.log('Firebase sync disabled, offline mode enabled');
         }
 
         // Hide auth modal
-        document.getElementById('authModal').style.display = 'none';
+        const authModal = document.getElementById('authModal');
+        if (authModal) {
+            authModal.style.display = 'none';
+            console.log('Auth modal hidden');
+        }
 
-        // Initialize app in offline mode
+        // Initialize app in offline mode (if not already initialized)
         if (window.initializeApp) {
-            await window.initializeApp();
-            console.log('App initialized in offline mode');
+            // Check if app is already initialized by looking for retreat data
+            if (!window.retreatData) {
+                await window.initializeApp();
+                console.log('App initialized in offline mode');
+            } else {
+                console.log('App already initialized, just hiding modal');
+            }
         } else {
             console.error('initializeApp function not found');
         }
@@ -176,13 +186,19 @@ window.onAuthStateChanged = (user) => {
     console.log('Auth state changed:', user ? user.email : 'not logged in');
 
     const syncStatusBar = document.getElementById('syncStatusBar');
+    const authModal = document.getElementById('authModal');
 
     if (user) {
+        // User logged in - hide auth modal and show sync status
+        if (authModal) authModal.style.display = 'none';
         if (syncStatusBar) syncStatusBar.style.display = 'block';
         updateSyncStatus(true, user.email);
     } else {
+        // User logged out - show auth modal and hide sync status
         if (syncStatusBar) syncStatusBar.style.display = 'none';
         updateSyncStatus(false);
+        // Note: Don't show auth modal here if app is already initialized in offline mode
+        // The modal is controlled by firebase.js showAuth() method
     }
 };
 

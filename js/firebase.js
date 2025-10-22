@@ -7,6 +7,7 @@ const FirebaseSync = {
     db: null,
     auth: null,
     syncEnabled: false,
+    offlineMode: false, // Flag to track if user explicitly chose offline mode
     listeners: [],
 
     // Initialize Firebase
@@ -364,6 +365,12 @@ const FirebaseSync = {
 
     // Show authentication UI
     showAuth() {
+        // Don't show auth modal if user explicitly chose offline mode
+        if (this.offlineMode) {
+            console.log('Offline mode active - not showing auth modal');
+            return;
+        }
+
         const authModal = document.getElementById('authModal');
         const appContent = document.getElementById('appContent');
 
