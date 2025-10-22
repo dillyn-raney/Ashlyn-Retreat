@@ -227,8 +227,10 @@ function createScheduleDay(date, dayData, index) {
         <h2 class="accordion-header" id="${headerId}">
             <button class="accordion-button ${index === 0 ? '' : 'collapsed'}" type="button"
                     data-bs-toggle="collapse" data-bs-target="#${collapseId}">
-                ${dayData.day} - ${dayData.title}
-                <br><small class="ms-2">${formattedDate}</small>
+                <div class="w-100">
+                    <div class="schedule-day-title">${dayData.day} - ${dayData.title}</div>
+                    <div class="schedule-day-date">${formattedDate}</div>
+                </div>
             </button>
         </h2>
         <div id="${collapseId}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}"
