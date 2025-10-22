@@ -70,7 +70,9 @@ const Calendar = {
     // Create event from activity
     createEventFromActivity(date, activity) {
         const [hours, minutes] = activity.time.split(':');
-        const startDate = new Date(date);
+
+        // Parse date as local time by appending 'T00:00:00' to avoid UTC interpretation
+        const startDate = new Date(date + 'T00:00:00');
         startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
         const endDate = new Date(startDate);
@@ -97,7 +99,8 @@ const Calendar = {
     exportDay(date, activities) {
         const events = activities.map(activity => this.createEventFromActivity(date, activity));
         const icsContent = this.generateICS(events);
-        const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+        // Parse date as local time to avoid timezone issues
+        const dayName = new Date(date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' });
         const filename = `ashlyn-retreat-${dayName.toLowerCase()}.ics`;
         this.downloadICS(icsContent, filename);
     },
