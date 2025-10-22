@@ -217,6 +217,26 @@ const Storage = {
         return journals.futureLetter || {};
     },
 
+    // Delete daily entry
+    deleteDailyEntry(date, user = null) {
+        const journals = this.getUserJournals(user);
+        if (journals.daily && journals.daily[date]) {
+            delete journals.daily[date];
+            return this.saveUserJournals(journals, user);
+        }
+        return false;
+    },
+
+    // Delete freeform entry
+    deleteFreeformEntry(index, user = null) {
+        const journals = this.getUserJournals(user);
+        if (journals.freeform && journals.freeform[index] !== undefined) {
+            journals.freeform.splice(index, 1);
+            return this.saveUserJournals(journals, user);
+        }
+        return false;
+    },
+
     // Tool data management
     saveToolData(toolName, data) {
         const key = this.keys[toolName];
@@ -330,6 +350,11 @@ const Storage = {
     moveKanbanCard(cardId, fromColumn, toColumn) {
         const kanban = this.getKanban();
 
+        // Ensure columns exist
+        if (!kanban.develop) kanban.develop = [];
+        if (!kanban.ready) kanban.ready = [];
+        if (!kanban.parking) kanban.parking = [];
+
         // Check if moving to "ready" and already has a card
         if (toColumn === 'ready' && kanban.ready.length > 0) {
             alert('Only ONE card can be in "Ready for Action" at a time. Please move the existing card first.');
@@ -337,12 +362,25 @@ const Storage = {
         }
 
         // Find and remove card from source column
+        if (!Array.isArray(kanban[fromColumn])) {
+            console.error(`Invalid fromColumn: ${fromColumn}`);
+            return false;
+        }
+
         const cardIndex = kanban[fromColumn].findIndex(c => c.id === cardId);
-        if (cardIndex === -1) return false;
+        if (cardIndex === -1) {
+            console.error(`Card ${cardId} not found in ${fromColumn}`);
+            return false;
+        }
 
         const [card] = kanban[fromColumn].splice(cardIndex, 1);
 
         // Add to destination column
+        if (!Array.isArray(kanban[toColumn])) {
+            console.error(`Invalid toColumn: ${toColumn}`);
+            return false;
+        }
+
         kanban[toColumn].push(card);
 
         return this.saveKanban(kanban);

@@ -510,8 +510,13 @@ function renderJournalsList() {
             html += `
                 <div class="journal-entry">
                     <div class="journal-entry-header">
-                        <span class="journal-entry-date">${displayDate}</span>
-                        <span class="journal-entry-type">Daily</span>
+                        <div>
+                            <span class="journal-entry-date">${displayDate}</span>
+                            <span class="journal-entry-type">Daily</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteDailyEntry('${date}')" title="Delete entry">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </div>
                     <div class="journal-entry-content">
                         <p><strong>Intention:</strong> ${entry.intention || 'N/A'}</p>
@@ -525,14 +530,19 @@ function renderJournalsList() {
     // Freeform entries
     if (freeformEntries.length > 0) {
         html += '<h6 class="mt-3">Freeform Entries</h6>';
-        freeformEntries.forEach(entry => {
+        freeformEntries.forEach((entry, index) => {
             // Parse date as local time by appending 'T00:00:00' to treat as local midnight
             const displayDate = new Date(entry.date + 'T00:00:00').toLocaleDateString();
             html += `
                 <div class="journal-entry">
                     <div class="journal-entry-header">
-                        <span class="journal-entry-date">${displayDate}</span>
-                        <span class="journal-entry-type">Freeform</span>
+                        <div>
+                            <span class="journal-entry-date">${displayDate}</span>
+                            <span class="journal-entry-type">Freeform</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteFreeformEntry(${index})" title="Delete entry">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </div>
                     <div class="journal-entry-content">
                         <p>${entry.text.substring(0, 200)}${entry.text.length > 200 ? '...' : ''}</p>
@@ -766,16 +776,23 @@ function loadToolsData() {
 function renderKanban() {
     const kanban = Storage.getKanban();
 
+    // Ensure kanban has proper structure
+    if (!kanban.develop) kanban.develop = [];
+    if (!kanban.ready) kanban.ready = [];
+    if (!kanban.parking) kanban.parking = [];
+
     ['develop', 'ready', 'parking'].forEach(column => {
         const container = document.getElementById(`kanban${column.charAt(0).toUpperCase() + column.slice(1)}`);
         if (!container) return;
 
         container.innerHTML = '';
 
-        kanban[column].forEach(card => {
-            const cardEl = createKanbanCardElement(card, column);
-            container.appendChild(cardEl);
-        });
+        if (Array.isArray(kanban[column])) {
+            kanban[column].forEach(card => {
+                const cardEl = createKanbanCardElement(card, column);
+                container.appendChild(cardEl);
+            });
+        }
     });
 }
 
@@ -864,6 +881,37 @@ function deleteKanbanCard(cardId, column) {
 // Make functions global for onclick handlers
 window.moveKanbanCard = moveKanbanCard;
 window.deleteKanbanCard = deleteKanbanCard;
+
+// Journal delete functions
+function deleteDailyEntry(date) {
+    if (confirm(`Are you sure you want to delete the daily reflection from ${new Date(date + 'T00:00:00').toLocaleDateString()}?`)) {
+        Storage.deleteDailyEntry(date, currentUser);
+        renderJournalsList();
+        // Clear the form if it's currently showing this entry
+        const currentDate = document.getElementById('dailyDate')?.value;
+        if (currentDate === date) {
+            document.querySelectorAll('[data-tool="daily"]').forEach(field => {
+                if (field.type === 'range') {
+                    field.value = 5;
+                } else {
+                    field.value = '';
+                }
+            });
+        }
+    }
+}
+
+function deleteFreeformEntry(index) {
+    const entries = Storage.getFreeformEntries(currentUser);
+    const entry = entries[index];
+    if (entry && confirm(`Are you sure you want to delete the freeform entry from ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}?`)) {
+        Storage.deleteFreeformEntry(index, currentUser);
+        renderJournalsList();
+    }
+}
+
+window.deleteDailyEntry = deleteDailyEntry;
+window.deleteFreeformEntry = deleteFreeformEntry;
 
 // Meals
 function renderMeals() {
