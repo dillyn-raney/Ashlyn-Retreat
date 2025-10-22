@@ -183,9 +183,20 @@ const FirebaseSync = {
         }
 
         const ref = this.getUserDataRef(key);
+
+        // Track if this is the first load to avoid triggering on initial sync
+        let isFirstLoad = true;
+
         const listener = ref.on('value', (snapshot) => {
             if (snapshot.exists()) {
                 const result = snapshot.val();
+
+                // Skip first load to avoid duplicate initial sync
+                if (isFirstLoad) {
+                    isFirstLoad = false;
+                    return;
+                }
+
                 callback(result.data);
             }
         });
@@ -246,7 +257,8 @@ const FirebaseSync = {
             for (const key of keysToSync) {
                 const firebaseData = await this.loadData(key);
                 if (firebaseData !== null) {
-                    Storage.save(key, firebaseData);
+                    // Skip Firebase sync to prevent loop
+                    Storage.save(key, firebaseData, true);
                 }
             }
 
@@ -278,7 +290,8 @@ const FirebaseSync = {
             // If both exist, use most recent (or merge if needed)
             // For simplicity, we'll use Firebase as source of truth
             if (firebaseData !== null) {
-                Storage.save(key, firebaseData);
+                // Skip Firebase sync to prevent loop
+                Storage.save(key, firebaseData, true);
             } else if (localData !== null) {
                 await this.saveData(key, localData);
             }
@@ -298,7 +311,8 @@ const FirebaseSync = {
         Object.values(Storage.keys).forEach(key => {
             this.listenToData(key, (data) => {
                 // Update localStorage when Firebase changes
-                Storage.save(key, data);
+                // Pass skipFirebaseSync=true to prevent infinite loop
+                Storage.save(key, data, true);
 
                 // Refresh UI
                 if (window.onDataSynced) {
