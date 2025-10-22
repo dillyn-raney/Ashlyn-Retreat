@@ -240,6 +240,19 @@ async function manualSync() {
     }
 }
 
+// Clean up corrupted Firebase data
+async function cleanupFirebaseData() {
+    const result = await FirebaseSync.cleanupCorruptedData();
+    if (result.success) {
+        alert(result.message + '\n\nPlease refresh the page.');
+        console.log('✅ Cleanup completed:', result);
+    } else {
+        alert('Cleanup failed: ' + result.message);
+        console.error('❌ Cleanup failed:', result);
+    }
+}
+
 // Export functions
 window.setupFirebaseUI = setupFirebaseUI;
 window.manualSync = manualSync;
+window.cleanupFirebaseData = cleanupFirebaseData;

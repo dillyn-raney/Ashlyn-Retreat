@@ -433,6 +433,59 @@ const FirebaseSync = {
         }
     },
 
+    // Clean up corrupted data in Firebase (removes entries with undefined/null data)
+    async cleanupCorruptedData() {
+        if (!this.syncEnabled || !this.user) {
+            return { success: false, message: 'Not authenticated' };
+        }
+
+        try {
+            console.log('🧹 Starting Firebase data cleanup...');
+            const cleanedKeys = [];
+            const keysToCheck = Object.values(Storage.keys);
+
+            for (const key of keysToCheck) {
+                try {
+                    const ref = this.getDataRef(key);
+                    const snapshot = await ref.once('value');
+
+                    if (snapshot.exists()) {
+                        const entry = snapshot.val();
+                        // Check if data is undefined, null, or the string "undefined"
+                        if (entry.data === undefined || entry.data === null || entry.data === "undefined") {
+                            console.log(`🗑️ Removing corrupted data for: ${key}`);
+                            await ref.remove();
+                            cleanedKeys.push(key);
+                        }
+                    }
+                } catch (error) {
+                    console.error(`❌ Error checking ${key}:`, error);
+                }
+            }
+
+            // Also clear corrupted data from localStorage
+            for (const key of keysToCheck) {
+                const localData = localStorage.getItem(key);
+                if (localData === 'undefined' || localData === 'null' || localData === '{}') {
+                    console.log(`🗑️ Removing corrupted localStorage for: ${key}`);
+                    localStorage.removeItem(key);
+                }
+            }
+
+            const message = `Cleaned up ${cleanedKeys.length} corrupted entries from Firebase and localStorage`;
+            console.log('✅ Cleanup complete:', message);
+
+            return {
+                success: true,
+                message: message,
+                cleanedKeys: cleanedKeys
+            };
+        } catch (error) {
+            console.error('❌ Cleanup failed:', error);
+            return { success: false, message: error.message };
+        }
+    },
+
     // Migrate data from user workspace to shared workspace
     async migrateToSharedWorkspace() {
         if (!this.syncEnabled || !this.user) {
