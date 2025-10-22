@@ -216,7 +216,8 @@ function createScheduleDay(date, dayData, index) {
     const headerId = `heading-${date}`;
     const collapseId = `collapse-${date}`;
 
-    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+    // Parse date as local time to avoid timezone issues
+    const formattedDate = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'long',
         day: 'numeric'
@@ -458,8 +459,13 @@ function saveFreeformEntry() {
 }
 
 function loadJournalData() {
-    // Set today's date for daily reflection
-    const today = new Date().toISOString().split('T')[0];
+    // Set today's date for daily reflection (using local timezone)
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${year}-${month}-${day}`;
+
     const dailyDate = document.getElementById('dailyDate');
     if (dailyDate && !dailyDate.value) {
         dailyDate.value = today;
@@ -497,10 +503,12 @@ function renderJournalsList() {
         html += '<h6 class="mt-3">Daily Reflections</h6>';
         dailyDates.forEach(date => {
             const entry = dailyEntries[date];
+            // Parse date as local time by appending 'T00:00:00' to treat as local midnight
+            const displayDate = new Date(date + 'T00:00:00').toLocaleDateString();
             html += `
                 <div class="journal-entry">
                     <div class="journal-entry-header">
-                        <span class="journal-entry-date">${new Date(date).toLocaleDateString()}</span>
+                        <span class="journal-entry-date">${displayDate}</span>
                         <span class="journal-entry-type">Daily</span>
                     </div>
                     <div class="journal-entry-content">
@@ -516,10 +524,12 @@ function renderJournalsList() {
     if (freeformEntries.length > 0) {
         html += '<h6 class="mt-3">Freeform Entries</h6>';
         freeformEntries.forEach(entry => {
+            // Parse date as local time by appending 'T00:00:00' to treat as local midnight
+            const displayDate = new Date(entry.date + 'T00:00:00').toLocaleDateString();
             html += `
                 <div class="journal-entry">
                     <div class="journal-entry-header">
-                        <span class="journal-entry-date">${new Date(entry.date).toLocaleDateString()}</span>
+                        <span class="journal-entry-date">${displayDate}</span>
                         <span class="journal-entry-type">Freeform</span>
                     </div>
                     <div class="journal-entry-content">
@@ -970,7 +980,8 @@ function exportJournalPDF(type) {
 
         addText(`Daily Reflection - ${currentUser}`, 18, 'bold');
         yPos += 5;
-        addText(`Date: ${new Date(date).toLocaleDateString()}`, 12);
+        // Parse date as local time to avoid timezone issues
+        addText(`Date: ${new Date(date + 'T00:00:00').toLocaleDateString()}`, 12);
         yPos += 10;
 
         if (data) {
