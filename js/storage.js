@@ -148,8 +148,23 @@ const Storage = {
 
     // Get current user
     getCurrentUser() {
-        const prefs = this.load(this.keys.user_preferences, { currentUser: 'Dillyn' });
-        return prefs.currentUser || 'Dillyn';
+        const prefs = this.load(this.keys.user_preferences);
+
+        // If we have a stored user preference, use it
+        if (prefs && prefs.currentUser) {
+            return prefs.currentUser;
+        }
+
+        // If Firebase is enabled and user is authenticated, get from Firebase email
+        if (window.FirebaseSync && window.FirebaseSync.user && window.FirebaseSync.user.email) {
+            const userName = this.getUserNameFromEmail(window.FirebaseSync.user.email);
+            // Save it for next time
+            this.setCurrentUser(userName);
+            return userName;
+        }
+
+        // Default to Dillyn for offline mode or first-time use
+        return 'Dillyn';
     },
 
     // Set current user
