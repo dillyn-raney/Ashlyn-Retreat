@@ -127,6 +127,9 @@ function setupEventListeners() {
     document.getElementById('exportValue')?.addEventListener('click', () => exportToolPDF('value'));
     document.getElementById('exportAction')?.addEventListener('click', () => exportToolPDF('action'));
 
+    // Shopping list print button
+    document.getElementById('printShoppingList')?.addEventListener('click', printShoppingList);
+
     // Freeform journal
     document.getElementById('newFreeform')?.addEventListener('click', newFreeformEntry);
     document.getElementById('saveFreeform')?.addEventListener('click', saveFreeformEntry);
@@ -1032,6 +1035,7 @@ function renderMeals() {
 
     renderRecipes();
     renderSnacks();
+    renderShoppingList();
 }
 
 function renderRecipes() {
@@ -1088,6 +1092,58 @@ function renderSnacks() {
             </div>
         </div>
     `).join('');
+}
+
+function renderShoppingList() {
+    const container = document.getElementById('shoppingList');
+    if (!container || !retreatData) return;
+
+    // Collect all ingredients from recipes
+    const ingredients = new Set();
+    retreatData.recipes.forEach(recipe => {
+        recipe.ingredients.forEach(ingredient => {
+            ingredients.add(ingredient);
+        });
+    });
+
+    // Collect all snacks
+    const snacks = retreatData.snacks.map(snack => snack.name);
+
+    // Convert ingredients to array and sort
+    const sortedIngredients = Array.from(ingredients).sort();
+
+    let html = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="mb-3"><i class="bi bi-basket"></i> Recipe Ingredients (${sortedIngredients.length} items)</h6>
+                <ul class="shopping-list">
+                    ${sortedIngredients.map(item => `
+                        <li class="shopping-list-item">
+                            <input type="checkbox" class="shopping-checkbox" id="ingredient-${item.replace(/[^a-z0-9]/gi, '-')}">
+                            <label for="ingredient-${item.replace(/[^a-z0-9]/gi, '-')}">${item}</label>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6 class="mb-3"><i class="bi bi-cookie"></i> Snacks (${snacks.length} items)</h6>
+                <ul class="shopping-list">
+                    ${snacks.map((item, index) => `
+                        <li class="shopping-list-item">
+                            <input type="checkbox" class="shopping-checkbox" id="snack-${index}">
+                            <label for="snack-${index}">${item}</label>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+function printShoppingList() {
+    window.print();
 }
 
 // Supplies

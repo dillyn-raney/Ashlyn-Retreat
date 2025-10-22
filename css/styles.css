@@ -1011,3 +1011,50 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #34a853;
     color: white;
 }
+
+/* Shopping List */
+.shopping-list {
+    list-style: none;
+    padding: 0;
+}
+
+.shopping-list-item {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.shopping-list-item:hover {
+    background-color: #f5f5f5;
+}
+
+.shopping-checkbox {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.shopping-list-item label {
+    cursor: pointer;
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.shopping-list-item input:checked + label {
+    text-decoration: line-through;
+    color: #999;
+}
+
+/* Print styles for shopping list */
+@media print {
+    .shopping-list-item {
+        break-inside: avoid;
+    }
+
+    #printShoppingList {
+        display: none;
+    }
+}
