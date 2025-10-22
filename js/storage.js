@@ -53,7 +53,10 @@ const Storage = {
     load(key, defaultValue = null) {
         try {
             const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : defaultValue;
+            if (!data || data === 'undefined' || data === 'null') {
+                return defaultValue;
+            }
+            return JSON.parse(data);
         } catch (e) {
             console.error('Load failed:', e);
             return defaultValue;

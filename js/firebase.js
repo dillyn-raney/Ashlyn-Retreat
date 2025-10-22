@@ -289,7 +289,8 @@ const FirebaseSync = {
 
             for (const key of keysToSync) {
                 const firebaseData = await this.loadData(key);
-                if (firebaseData !== null) {
+                // Only save if data exists and is not undefined
+                if (firebaseData !== null && firebaseData !== undefined) {
                     // Skip Firebase sync to prevent loop
                     Storage.save(key, firebaseData, true);
                 }
@@ -322,7 +323,7 @@ const FirebaseSync = {
 
             // If both exist, use most recent (or merge if needed)
             // For simplicity, we'll use Firebase as source of truth
-            if (firebaseData !== null) {
+            if (firebaseData !== null && firebaseData !== undefined) {
                 // Skip Firebase sync to prevent loop
                 Storage.save(key, firebaseData, true);
             } else if (localData !== null) {
