@@ -201,11 +201,18 @@ const Storage = {
     getUserJournals(user = null) {
         user = user || this.getCurrentUser();
         const key = this.getUserJournalKey(user);
-        return this.load(key, {
+        const journals = this.load(key, {
             daily: {},
             freeform: [],
             futureLetter: {}
         });
+
+        // Ensure structure is complete even if loaded data is corrupted
+        if (!journals.daily) journals.daily = {};
+        if (!journals.freeform) journals.freeform = [];
+        if (!journals.futureLetter) journals.futureLetter = {};
+
+        return journals;
     },
 
     // Save journals for current user
@@ -234,6 +241,12 @@ const Storage = {
     // Save freeform entry
     saveFreeformEntry(entry, user = null) {
         const journals = this.getUserJournals(user);
+
+        // Ensure freeform array exists
+        if (!journals.freeform) {
+            journals.freeform = [];
+        }
+
         entry.timestamp = entry.timestamp || new Date().toISOString();
         entry.id = entry.id || Date.now();
 

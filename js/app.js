@@ -138,6 +138,19 @@ function setupEventListeners() {
     // Daily journal date change
     document.getElementById('dailyDate')?.addEventListener('change', loadDailyReflection);
 
+    // Freeform journal date change - clear form for new date
+    document.getElementById('freeformDate')?.addEventListener('change', () => {
+        // When date changes, start a new entry
+        newFreeformEntry();
+        // But keep the newly selected date
+        const selectedDate = document.getElementById('freeformDate')?.value;
+        if (selectedDate) {
+            setTimeout(() => {
+                document.getElementById('freeformDate').value = selectedDate;
+            }, 0);
+        }
+    });
+
     // Energy level slider
     document.getElementById('energyLevel')?.addEventListener('input', (e) => {
         document.getElementById('energyValue').textContent = e.target.value;
