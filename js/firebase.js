@@ -129,11 +129,40 @@ const FirebaseSync = {
         return this.user !== null;
     },
 
-    // Get user data reference
+    // Keys that should be stored in shared workspace (not user-specific)
+    sharedDataKeys: [
+        'ashlyn_retreat_supplies',
+        'ashlyn_retreat_swot',
+        'ashlyn_retreat_ikigai',
+        'ashlyn_retreat_value_prop',
+        'ashlyn_retreat_kanban',
+        'ashlyn_retreat_action_plan'
+    ],
+
+    // Check if a key should use shared workspace
+    isSharedData(key) {
+        return this.sharedDataKeys.includes(key);
+    },
+
+    // Get user data reference (for user-specific data like journals)
     getUserDataRef(path = '') {
         if (!this.user) return null;
         const basePath = `users/${this.user.uid}/userData`;
         return path ? this.db.ref(`${basePath}/${path}`) : this.db.ref(basePath);
+    },
+
+    // Get shared workspace reference (for shared data like business tools)
+    getSharedDataRef(path = '') {
+        if (!this.user) return null;
+        // Use a shared workspace ID - you can customize this (e.g., retreat group ID)
+        // For now, using a simple shared space for the retreat
+        const basePath = 'shared/ashlyn_retreat';
+        return path ? this.db.ref(`${basePath}/${path}`) : this.db.ref(basePath);
+    },
+
+    // Get appropriate reference based on data type
+    getDataRef(key) {
+        return this.isSharedData(key) ? this.getSharedDataRef(key) : this.getUserDataRef(key);
     },
 
     // Save data to Firebase
@@ -143,11 +172,13 @@ const FirebaseSync = {
         }
 
         try {
-            const ref = this.getUserDataRef(key);
+            const ref = this.getDataRef(key);
             await ref.set({
                 data: data,
-                updatedAt: firebase.database.ServerValue.TIMESTAMP
+                updatedAt: firebase.database.ServerValue.TIMESTAMP,
+                updatedBy: this.user.email
             });
+            console.log(`✅ Saved ${key} to ${this.isSharedData(key) ? 'shared' : 'user'} workspace`);
             return true;
         } catch (error) {
             console.error('Firebase save error:', error);
@@ -162,11 +193,12 @@ const FirebaseSync = {
         }
 
         try {
-            const ref = this.getUserDataRef(key);
+            const ref = this.getDataRef(key);
             const snapshot = await ref.once('value');
 
             if (snapshot.exists()) {
                 const result = snapshot.val();
+                console.log(`✅ Loaded ${key} from ${this.isSharedData(key) ? 'shared' : 'user'} workspace`);
                 return result.data;
             }
             return null;
@@ -182,7 +214,7 @@ const FirebaseSync = {
             return null;
         }
 
-        const ref = this.getUserDataRef(key);
+        const ref = this.getDataRef(key);
 
         // Track if this is the first load to avoid triggering on initial sync
         let isFirstLoad = true;
@@ -207,7 +239,7 @@ const FirebaseSync = {
 
     // Stop listening to a specific key
     stopListening(key) {
-        const ref = this.getUserDataRef(key);
+        const ref = this.getDataRef(key);
         ref.off();
         this.listeners = this.listeners.filter(l => l.ref !== ref);
     },
@@ -389,6 +421,66 @@ const FirebaseSync = {
             await this.pushAllData();
             return { success: true, message: 'Sync completed' };
         } catch (error) {
+            return { success: false, message: error.message };
+        }
+    },
+
+    // Migrate data from user workspace to shared workspace
+    async migrateToSharedWorkspace() {
+        if (!this.syncEnabled || !this.user) {
+            return { success: false, message: 'Not authenticated' };
+        }
+
+        try {
+            console.log('🔄 Starting migration to shared workspace...');
+            const migratedKeys = [];
+            const failedKeys = [];
+
+            for (const key of this.sharedDataKeys) {
+                try {
+                    // Load from user workspace
+                    const userRef = this.getUserDataRef(key);
+                    const snapshot = await userRef.once('value');
+
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+
+                        // Save to shared workspace
+                        const sharedRef = this.getSharedDataRef(key);
+                        await sharedRef.set({
+                            data: data.data,
+                            updatedAt: firebase.database.ServerValue.TIMESTAMP,
+                            updatedBy: this.user.email,
+                            migratedFrom: `users/${this.user.uid}/userData/${key}`,
+                            migratedAt: firebase.database.ServerValue.TIMESTAMP
+                        });
+
+                        console.log(`✅ Migrated ${key} to shared workspace`);
+                        migratedKeys.push(key);
+
+                        // Optional: Remove from user workspace after successful migration
+                        // Uncomment if you want to clean up old data
+                        // await userRef.remove();
+                    } else {
+                        console.log(`ℹ️ No data found for ${key} in user workspace`);
+                    }
+                } catch (error) {
+                    console.error(`❌ Failed to migrate ${key}:`, error);
+                    failedKeys.push(key);
+                }
+            }
+
+            const message = `Migrated ${migratedKeys.length} keys to shared workspace. Failed: ${failedKeys.length}`;
+            console.log('✅ Migration complete:', message);
+
+            return {
+                success: true,
+                message,
+                migratedKeys,
+                failedKeys
+            };
+        } catch (error) {
+            console.error('Migration error:', error);
             return { success: false, message: error.message };
         }
     }
