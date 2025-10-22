@@ -4,6 +4,7 @@
 let retreatData = null;
 let currentUser = 'Dillyn';
 let autoSavers = {};
+let currentFreeformEntryId = null; // Track the current freeform entry being edited
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
@@ -127,6 +128,7 @@ function setupEventListeners() {
     document.getElementById('exportAction')?.addEventListener('click', () => exportToolPDF('action'));
 
     // Freeform journal
+    document.getElementById('newFreeform')?.addEventListener('click', newFreeformEntry);
     document.getElementById('saveFreeform')?.addEventListener('click', saveFreeformEntry);
     document.getElementById('promptSelector')?.addEventListener('change', handlePromptSelection);
 
@@ -336,11 +338,13 @@ function setupJournalAutoSave() {
     // Freeform auto-save
     const freeformField = document.getElementById('freeformText');
     if (freeformField) {
-        autoSavers.freeform = new AutoSaver(() => {
-            // Auto-save happens on explicit save button
-        }, 30000);
+        autoSavers.freeform = new AutoSaver(saveFreeformEntry, 30000);
         freeformField.addEventListener('input', () => {
             showSaveIndicator('freeformSaveIndicator', 'typing');
+            autoSavers.freeform.trigger();
+        });
+        freeformField.addEventListener('blur', () => {
+            autoSavers.freeform.saveNow();
         });
     }
 }
@@ -389,25 +393,35 @@ function loadDailyReflection() {
     const date = document.getElementById('dailyDate')?.value;
     if (!date) return;
 
-    const data = Storage.getDailyReflection(date, currentUser);
-    if (!data) return;
-
+    // First, clear all fields
     document.querySelectorAll('#dailyReflectionForm .journal-field').forEach(field => {
-        const fieldName = field.dataset.field;
-        if (data[fieldName] !== undefined) {
-            if (field.type === 'checkbox') {
-                field.checked = data[fieldName];
-            } else {
-                field.value = data[fieldName];
-            }
+        if (field.type === 'checkbox') {
+            field.checked = false;
+        } else {
+            field.value = '';
         }
     });
+
+    // Then load data if it exists
+    const data = Storage.getDailyReflection(date, currentUser);
+    if (data) {
+        document.querySelectorAll('#dailyReflectionForm .journal-field').forEach(field => {
+            const fieldName = field.dataset.field;
+            if (data[fieldName] !== undefined) {
+                if (field.type === 'checkbox') {
+                    field.checked = data[fieldName];
+                } else {
+                    field.value = data[fieldName];
+                }
+            }
+        });
+    }
 
     // Update energy slider display
     const energyValue = document.getElementById('energyValue');
     const energyLevel = document.getElementById('energyLevel');
     if (energyValue && energyLevel) {
-        energyValue.textContent = energyLevel.value;
+        energyValue.textContent = energyLevel.value || '5';
     }
 }
 
@@ -439,10 +453,12 @@ function saveFreeformEntry() {
     const date = document.getElementById('freeformDate')?.value;
     const text = document.getElementById('freeformText')?.value;
 
-    if (!date || !text) {
-        alert('Please enter a date and your thoughts.');
+    if (!date || !text.trim()) {
+        // Silently skip if date or text is empty (for auto-save)
         return;
     }
+
+    showSaveIndicator('freeformSaveIndicator', 'saving');
 
     const entry = {
         date: date,
@@ -450,14 +466,31 @@ function saveFreeformEntry() {
         type: 'freeform'
     };
 
+    // If editing an existing entry, preserve its ID
+    if (currentFreeformEntryId) {
+        entry.id = currentFreeformEntryId;
+    }
+
     Storage.saveFreeformEntry(entry, currentUser);
+
+    // Set the current entry ID if it was just created
+    if (!currentFreeformEntryId && entry.id) {
+        currentFreeformEntryId = entry.id;
+    }
+
     showSaveIndicator('freeformSaveIndicator', 'saved');
 
-    // Clear form
-    document.getElementById('freeformText').value = '';
-    document.getElementById('promptSelector').value = '';
+    // Refresh the journals list to show the new/updated entry
+    renderJournalsList();
+}
 
-    alert('Journal entry saved!');
+function newFreeformEntry() {
+    // Clear the form for a new entry
+    document.getElementById('freeformText').value = '';
+    document.getElementById('freeformDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('promptSelector').value = '';
+    currentFreeformEntryId = null; // Reset the entry ID
+    showSaveIndicator('freeformSaveIndicator', '');
 }
 
 function loadJournalData() {
