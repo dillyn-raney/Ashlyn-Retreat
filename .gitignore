@@ -26,6 +26,7 @@ functions/node_modules/
 functions/.runtimeconfig.json
 functions/lib/
 
-# Sensitive files
-js/gemini-config.js
-js/firebase-config.js
+# Config files with sensitive data (keep local only)
+# The .example.js versions will be committed
+js/gemini-config.local.js
+js/firebase-config.local.js
